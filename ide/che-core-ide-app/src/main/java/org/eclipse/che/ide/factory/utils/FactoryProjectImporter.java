@@ -36,8 +36,8 @@ import org.eclipse.che.ide.api.project.MutableProjectConfig;
 import org.eclipse.che.ide.api.project.wizard.ImportProjectNotificationSubscriberFactory;
 import org.eclipse.che.ide.api.project.wizard.ProjectNotificationSubscriber;
 import org.eclipse.che.ide.api.resources.Project;
-import org.eclipse.che.ide.api.user.AskCredentialsDialog;
-import org.eclipse.che.ide.api.user.Credentials;
+import org.eclipse.che.ide.api.subversion.Credentials;
+import org.eclipse.che.ide.api.subversion.SubversionCredentialsDialog;
 import org.eclipse.che.ide.resource.Path;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import org.eclipse.che.ide.rest.RestContext;
@@ -50,6 +50,7 @@ import org.eclipse.che.ide.websocket.rest.SubscriptionHandler;
 import org.eclipse.che.security.oauth.OAuthStatus;
 
 import javax.validation.constraints.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -79,7 +80,7 @@ public class FactoryProjectImporter extends AbstractImporter {
     private static final String CHANNEL = "git:checkout:";
 
     private final MessageBusProvider          messageBusProvider;
-    private final AskCredentialsDialog        askCredentialsDialog;
+    private final SubversionCredentialsDialog askCredentialsDialog;
     private final CoreLocalizationConstant    locale;
     private final NotificationManager         notificationManager;
     private final String                      restContext;
@@ -93,7 +94,7 @@ public class FactoryProjectImporter extends AbstractImporter {
     @Inject
     public FactoryProjectImporter(AppContext appContext,
                                   NotificationManager notificationManager,
-                                  AskCredentialsDialog askCredentialsDialog,
+                                  SubversionCredentialsDialog askCredentialsDialog,
                                   CoreLocalizationConstant locale,
                                   ImportProjectNotificationSubscriberFactory subscriberFactory,
                                   @RestContext String restContext,
