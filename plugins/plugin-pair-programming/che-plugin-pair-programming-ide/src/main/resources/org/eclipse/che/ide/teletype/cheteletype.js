@@ -1,13 +1,3 @@
-/*
- * Copyright (c) 2012-2018 Red Hat, Inc.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *   Red Hat, Inc. - initial API and implementation
- */
 var CheTeletype =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -71,7 +61,7 @@ var CheTeletype =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 18);
+/******/ 	return __webpack_require__(__webpack_require__.s = 19);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -147,7 +137,7 @@ function isBuffer(b) {
 // ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-var util = __webpack_require__(29);
+var util = __webpack_require__(30);
 var hasOwn = Object.prototype.hasOwnProperty;
 var pSlice = Array.prototype.slice;
 var functionsHaveNames = (function () {
@@ -570,18 +560,18 @@ var objectKeys = Object.keys || function (obj) {
   return keys;
 };
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function() {
-  exports.Emitter = __webpack_require__(32);
+  exports.Emitter = __webpack_require__(33);
 
   exports.Disposable = __webpack_require__(7);
 
-  exports.CompositeDisposable = __webpack_require__(33);
+  exports.CompositeDisposable = __webpack_require__(34);
 
 }).call(this);
 
@@ -752,7 +742,7 @@ module.exports = {
       result.browser = 'edge';
       result.version = extractVersion(navigator.userAgent,
           /Edge\/(\d+).(\d+)$/, 2);
-    } else if (navigator.mediaDevices &&
+    } else if (window.RTCPeerConnection &&
         navigator.userAgent.match(/AppleWebKit\/(\d+)\./)) { // Safari.
       result.browser = 'safari';
       result.version = extractVersion(navigator.userAgent,
@@ -847,33 +837,6 @@ module.exports = {
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -889,10 +852,13 @@ var jspb = __webpack_require__(9);
 var goog = jspb;
 var global = Function('return this')();
 
-var teletype$crdt_pb = __webpack_require__(49);
+var teletype$crdt_pb = __webpack_require__(50);
 goog.exportSymbol('proto.BufferProxy', null, global);
 goog.exportSymbol('proto.BufferProxyUpdate', null, global);
+goog.exportSymbol('proto.BufferProxyUpdate.OperationsUpdate', null, global);
+goog.exportSymbol('proto.BufferProxyUpdate.URIUpdate', null, global);
 goog.exportSymbol('proto.EditorProxy', null, global);
+goog.exportSymbol('proto.EditorProxyMetadata', null, global);
 goog.exportSymbol('proto.EditorProxyUpdate', null, global);
 goog.exportSymbol('proto.EditorProxyUpdate.SelectionsUpdate', null, global);
 goog.exportSymbol('proto.NetworkMessage', null, global);
@@ -905,6 +871,7 @@ goog.exportSymbol('proto.NetworkMessage.StarUnicast', null, global);
 goog.exportSymbol('proto.PeerIdentity', null, global);
 goog.exportSymbol('proto.PortalSubscriptionResponse', null, global);
 goog.exportSymbol('proto.PortalUpdate', null, global);
+goog.exportSymbol('proto.PortalUpdate.EditorProxyCreation', null, global);
 goog.exportSymbol('proto.PortalUpdate.EditorProxyRemoval', null, global);
 goog.exportSymbol('proto.PortalUpdate.EditorProxySwitch', null, global);
 goog.exportSymbol('proto.PortalUpdate.SiteAssignment', null, global);
@@ -936,7 +903,7 @@ if (goog.DEBUG && !COMPILED) {
  * @private {!Array<number>}
  * @const
  */
-proto.PortalSubscriptionResponse.repeatedFields_ = [4,5,6];
+proto.PortalSubscriptionResponse.repeatedFields_ = [4,5,6,8];
 
 
 
@@ -974,7 +941,9 @@ proto.PortalSubscriptionResponse.toObject = function(includeInstance, msg) {
     proto.BufferProxy.toObject, includeInstance),
     activeEditorProxiesList: jspb.Message.toObjectList(msg.getActiveEditorProxiesList(),
     proto.EditorProxy.toObject, includeInstance),
-    activeEditorProxyIdsBySiteIdMap: (f = msg.getActiveEditorProxyIdsBySiteIdMap()) ? f.toObject(includeInstance, undefined) : []
+    activeEditorProxyIdsBySiteIdMap: (f = msg.getActiveEditorProxyIdsBySiteIdMap()) ? f.toObject(includeInstance, undefined) : [],
+    editorProxiesMetadataList: jspb.Message.toObjectList(msg.getEditorProxiesMetadataList(),
+    proto.EditorProxyMetadata.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -1038,6 +1007,11 @@ proto.PortalSubscriptionResponse.deserializeBinaryFromReader = function(msg, rea
         jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readUint32, jspb.BinaryReader.prototype.readUint32);
          });
       break;
+    case 8:
+      var value = new proto.EditorProxyMetadata;
+      reader.readMessage(value,proto.EditorProxyMetadata.deserializeBinaryFromReader);
+      msg.addEditorProxiesMetadata(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1098,6 +1072,14 @@ proto.PortalSubscriptionResponse.serializeBinaryToWriter = function(message, wri
   f = message.getActiveEditorProxyIdsBySiteIdMap(true);
   if (f && f.getLength() > 0) {
     f.serializeBinary(7, writer, jspb.BinaryWriter.prototype.writeUint32, jspb.BinaryWriter.prototype.writeUint32);
+  }
+  f = message.getEditorProxiesMetadataList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      8,
+      f,
+      proto.EditorProxyMetadata.serializeBinaryToWriter
+    );
   }
 };
 
@@ -1231,6 +1213,37 @@ proto.PortalSubscriptionResponse.prototype.clearActiveEditorProxyIdsBySiteIdMap 
 };
 
 
+/**
+ * repeated EditorProxyMetadata editor_proxies_metadata = 8;
+ * @return {!Array.<!proto.EditorProxyMetadata>}
+ */
+proto.PortalSubscriptionResponse.prototype.getEditorProxiesMetadataList = function() {
+  return /** @type{!Array.<!proto.EditorProxyMetadata>} */ (
+    jspb.Message.getRepeatedWrapperField(this, proto.EditorProxyMetadata, 8));
+};
+
+
+/** @param {!Array.<!proto.EditorProxyMetadata>} value */
+proto.PortalSubscriptionResponse.prototype.setEditorProxiesMetadataList = function(value) {
+  jspb.Message.setRepeatedWrapperField(this, 8, value);
+};
+
+
+/**
+ * @param {!proto.EditorProxyMetadata=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.EditorProxyMetadata}
+ */
+proto.PortalSubscriptionResponse.prototype.addEditorProxiesMetadata = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 8, opt_value, proto.EditorProxyMetadata, opt_index);
+};
+
+
+proto.PortalSubscriptionResponse.prototype.clearEditorProxiesMetadataList = function() {
+  this.setEditorProxiesMetadataList([]);
+};
+
+
 
 /**
  * Generated by JsPbCodeGenerator.
@@ -1257,7 +1270,7 @@ if (goog.DEBUG && !COMPILED) {
  * @private {!Array<!Array<number>>}
  * @const
  */
-proto.PortalUpdate.oneofGroups_ = [[1,2,3,4]];
+proto.PortalUpdate.oneofGroups_ = [[1,2,4,5]];
 
 /**
  * @enum {number}
@@ -1266,8 +1279,8 @@ proto.PortalUpdate.VariantCase = {
   VARIANT_NOT_SET: 0,
   EDITOR_PROXY_SWITCH: 1,
   SITE_ASSIGNMENT: 2,
-  EDITOR_PROXY_REMOVAL: 3,
-  TETHER_UPDATE: 4
+  TETHER_UPDATE: 4,
+  EDITOR_PROXY_CREATION: 5
 };
 
 /**
@@ -1308,8 +1321,8 @@ proto.PortalUpdate.toObject = function(includeInstance, msg) {
   var f, obj = {
     editorProxySwitch: (f = msg.getEditorProxySwitch()) && proto.PortalUpdate.EditorProxySwitch.toObject(includeInstance, f),
     siteAssignment: (f = msg.getSiteAssignment()) && proto.PortalUpdate.SiteAssignment.toObject(includeInstance, f),
-    editorProxyRemoval: (f = msg.getEditorProxyRemoval()) && proto.PortalUpdate.EditorProxyRemoval.toObject(includeInstance, f),
-    tetherUpdate: (f = msg.getTetherUpdate()) && proto.Tether.toObject(includeInstance, f)
+    tetherUpdate: (f = msg.getTetherUpdate()) && proto.Tether.toObject(includeInstance, f),
+    editorProxyCreation: (f = msg.getEditorProxyCreation()) && proto.PortalUpdate.EditorProxyCreation.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1356,15 +1369,15 @@ proto.PortalUpdate.deserializeBinaryFromReader = function(msg, reader) {
       reader.readMessage(value,proto.PortalUpdate.SiteAssignment.deserializeBinaryFromReader);
       msg.setSiteAssignment(value);
       break;
-    case 3:
-      var value = new proto.PortalUpdate.EditorProxyRemoval;
-      reader.readMessage(value,proto.PortalUpdate.EditorProxyRemoval.deserializeBinaryFromReader);
-      msg.setEditorProxyRemoval(value);
-      break;
     case 4:
       var value = new proto.Tether;
       reader.readMessage(value,proto.Tether.deserializeBinaryFromReader);
       msg.setTetherUpdate(value);
+      break;
+    case 5:
+      var value = new proto.PortalUpdate.EditorProxyCreation;
+      reader.readMessage(value,proto.PortalUpdate.EditorProxyCreation.deserializeBinaryFromReader);
+      msg.setEditorProxyCreation(value);
       break;
     default:
       reader.skipField();
@@ -1411,20 +1424,20 @@ proto.PortalUpdate.serializeBinaryToWriter = function(message, writer) {
       proto.PortalUpdate.SiteAssignment.serializeBinaryToWriter
     );
   }
-  f = message.getEditorProxyRemoval();
-  if (f != null) {
-    writer.writeMessage(
-      3,
-      f,
-      proto.PortalUpdate.EditorProxyRemoval.serializeBinaryToWriter
-    );
-  }
   f = message.getTetherUpdate();
   if (f != null) {
     writer.writeMessage(
       4,
       f,
       proto.Tether.serializeBinaryToWriter
+    );
+  }
+  f = message.getEditorProxyCreation();
+  if (f != null) {
+    writer.writeMessage(
+      5,
+      f,
+      proto.PortalUpdate.EditorProxyCreation.serializeBinaryToWriter
     );
   }
 };
@@ -1477,8 +1490,7 @@ proto.PortalUpdate.EditorProxySwitch.prototype.toObject = function(opt_includeIn
  */
 proto.PortalUpdate.EditorProxySwitch.toObject = function(includeInstance, msg) {
   var f, obj = {
-    editorProxyId: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    bufferProxyId: jspb.Message.getFieldWithDefault(msg, 2, 0)
+    editorProxyId: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -1519,10 +1531,6 @@ proto.PortalUpdate.EditorProxySwitch.deserializeBinaryFromReader = function(msg,
       var value = /** @type {number} */ (reader.readUint32());
       msg.setEditorProxyId(value);
       break;
-    case 2:
-      var value = /** @type {number} */ (reader.readUint32());
-      msg.setBufferProxyId(value);
-      break;
     default:
       reader.skipField();
       break;
@@ -1559,13 +1567,6 @@ proto.PortalUpdate.EditorProxySwitch.serializeBinaryToWriter = function(message,
       f
     );
   }
-  f = message.getBufferProxyId();
-  if (f !== 0) {
-    writer.writeUint32(
-      2,
-      f
-    );
-  }
 };
 
 
@@ -1580,22 +1581,7 @@ proto.PortalUpdate.EditorProxySwitch.prototype.getEditorProxyId = function() {
 
 /** @param {number} value */
 proto.PortalUpdate.EditorProxySwitch.prototype.setEditorProxyId = function(value) {
-  jspb.Message.setField(this, 1, value);
-};
-
-
-/**
- * optional uint32 buffer_proxy_id = 2;
- * @return {number}
- */
-proto.PortalUpdate.EditorProxySwitch.prototype.getBufferProxyId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
-};
-
-
-/** @param {number} value */
-proto.PortalUpdate.EditorProxySwitch.prototype.setBufferProxyId = function(value) {
-  jspb.Message.setField(this, 2, value);
+  jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -1749,7 +1735,7 @@ proto.PortalUpdate.SiteAssignment.prototype.getPeerId = function() {
 
 /** @param {string} value */
 proto.PortalUpdate.SiteAssignment.prototype.setPeerId = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -1764,7 +1750,7 @@ proto.PortalUpdate.SiteAssignment.prototype.getSiteId = function() {
 
 /** @param {number} value */
 proto.PortalUpdate.SiteAssignment.prototype.setSiteId = function(value) {
-  jspb.Message.setField(this, 2, value);
+  jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
@@ -1906,7 +1892,166 @@ proto.PortalUpdate.EditorProxyRemoval.prototype.getEditorProxyId = function() {
 
 /** @param {number} value */
 proto.PortalUpdate.EditorProxyRemoval.prototype.setEditorProxyId = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.PortalUpdate.EditorProxyCreation = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.PortalUpdate.EditorProxyCreation, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.PortalUpdate.EditorProxyCreation.displayName = 'proto.PortalUpdate.EditorProxyCreation';
+}
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.PortalUpdate.EditorProxyCreation.prototype.toObject = function(opt_includeInstance) {
+  return proto.PortalUpdate.EditorProxyCreation.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.PortalUpdate.EditorProxyCreation} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.PortalUpdate.EditorProxyCreation.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    editorProxyMetadata: (f = msg.getEditorProxyMetadata()) && proto.EditorProxyMetadata.toObject(includeInstance, f)
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.PortalUpdate.EditorProxyCreation}
+ */
+proto.PortalUpdate.EditorProxyCreation.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.PortalUpdate.EditorProxyCreation;
+  return proto.PortalUpdate.EditorProxyCreation.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.PortalUpdate.EditorProxyCreation} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.PortalUpdate.EditorProxyCreation}
+ */
+proto.PortalUpdate.EditorProxyCreation.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = new proto.EditorProxyMetadata;
+      reader.readMessage(value,proto.EditorProxyMetadata.deserializeBinaryFromReader);
+      msg.setEditorProxyMetadata(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.PortalUpdate.EditorProxyCreation.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.PortalUpdate.EditorProxyCreation.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.PortalUpdate.EditorProxyCreation} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.PortalUpdate.EditorProxyCreation.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getEditorProxyMetadata();
+  if (f != null) {
+    writer.writeMessage(
+      1,
+      f,
+      proto.EditorProxyMetadata.serializeBinaryToWriter
+    );
+  }
+};
+
+
+/**
+ * optional EditorProxyMetadata editor_proxy_metadata = 1;
+ * @return {?proto.EditorProxyMetadata}
+ */
+proto.PortalUpdate.EditorProxyCreation.prototype.getEditorProxyMetadata = function() {
+  return /** @type{?proto.EditorProxyMetadata} */ (
+    jspb.Message.getWrapperField(this, proto.EditorProxyMetadata, 1));
+};
+
+
+/** @param {?proto.EditorProxyMetadata|undefined} value */
+proto.PortalUpdate.EditorProxyCreation.prototype.setEditorProxyMetadata = function(value) {
+  jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+proto.PortalUpdate.EditorProxyCreation.prototype.clearEditorProxyMetadata = function() {
+  this.setEditorProxyMetadata(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {!boolean}
+ */
+proto.PortalUpdate.EditorProxyCreation.prototype.hasEditorProxyMetadata = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 
@@ -1971,36 +2116,6 @@ proto.PortalUpdate.prototype.hasSiteAssignment = function() {
 
 
 /**
- * optional EditorProxyRemoval editor_proxy_removal = 3;
- * @return {?proto.PortalUpdate.EditorProxyRemoval}
- */
-proto.PortalUpdate.prototype.getEditorProxyRemoval = function() {
-  return /** @type{?proto.PortalUpdate.EditorProxyRemoval} */ (
-    jspb.Message.getWrapperField(this, proto.PortalUpdate.EditorProxyRemoval, 3));
-};
-
-
-/** @param {?proto.PortalUpdate.EditorProxyRemoval|undefined} value */
-proto.PortalUpdate.prototype.setEditorProxyRemoval = function(value) {
-  jspb.Message.setOneofWrapperField(this, 3, proto.PortalUpdate.oneofGroups_[0], value);
-};
-
-
-proto.PortalUpdate.prototype.clearEditorProxyRemoval = function() {
-  this.setEditorProxyRemoval(undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {!boolean}
- */
-proto.PortalUpdate.prototype.hasEditorProxyRemoval = function() {
-  return jspb.Message.getField(this, 3) != null;
-};
-
-
-/**
  * optional Tether tether_update = 4;
  * @return {?proto.Tether}
  */
@@ -2027,6 +2142,36 @@ proto.PortalUpdate.prototype.clearTetherUpdate = function() {
  */
 proto.PortalUpdate.prototype.hasTetherUpdate = function() {
   return jspb.Message.getField(this, 4) != null;
+};
+
+
+/**
+ * optional EditorProxyCreation editor_proxy_creation = 5;
+ * @return {?proto.PortalUpdate.EditorProxyCreation}
+ */
+proto.PortalUpdate.prototype.getEditorProxyCreation = function() {
+  return /** @type{?proto.PortalUpdate.EditorProxyCreation} */ (
+    jspb.Message.getWrapperField(this, proto.PortalUpdate.EditorProxyCreation, 5));
+};
+
+
+/** @param {?proto.PortalUpdate.EditorProxyCreation|undefined} value */
+proto.PortalUpdate.prototype.setEditorProxyCreation = function(value) {
+  jspb.Message.setOneofWrapperField(this, 5, proto.PortalUpdate.oneofGroups_[0], value);
+};
+
+
+proto.PortalUpdate.prototype.clearEditorProxyCreation = function() {
+  this.setEditorProxyCreation(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {!boolean}
+ */
+proto.PortalUpdate.prototype.hasEditorProxyCreation = function() {
+  return jspb.Message.getField(this, 5) != null;
 };
 
 
@@ -2192,7 +2337,7 @@ proto.Tether.prototype.getFollowerSiteId = function() {
 
 /** @param {number} value */
 proto.Tether.prototype.setFollowerSiteId = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -2207,7 +2352,7 @@ proto.Tether.prototype.getLeaderSiteId = function() {
 
 /** @param {number} value */
 proto.Tether.prototype.setLeaderSiteId = function(value) {
-  jspb.Message.setField(this, 2, value);
+  jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
@@ -2222,7 +2367,7 @@ proto.Tether.prototype.getState = function() {
 
 /** @param {number} value */
 proto.Tether.prototype.setState = function(value) {
-  jspb.Message.setField(this, 3, value);
+  jspb.Message.setProto3IntField(this, 3, value);
 };
 
 
@@ -2387,7 +2532,7 @@ proto.EditorProxy.prototype.getId = function() {
 
 /** @param {number} value */
 proto.EditorProxy.prototype.setId = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -2402,7 +2547,7 @@ proto.EditorProxy.prototype.getBufferProxyId = function() {
 
 /** @param {number} value */
 proto.EditorProxy.prototype.setBufferProxyId = function(value) {
-  jspb.Message.setField(this, 2, value);
+  jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
@@ -2421,6 +2566,202 @@ proto.EditorProxy.prototype.getSelectionLayerIdsBySiteIdMap = function(opt_noLaz
 
 proto.EditorProxy.prototype.clearSelectionLayerIdsBySiteIdMap = function() {
   this.getSelectionLayerIdsBySiteIdMap().clear();
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.EditorProxyMetadata = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.EditorProxyMetadata, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.EditorProxyMetadata.displayName = 'proto.EditorProxyMetadata';
+}
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.EditorProxyMetadata.prototype.toObject = function(opt_includeInstance) {
+  return proto.EditorProxyMetadata.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.EditorProxyMetadata} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.EditorProxyMetadata.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    id: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    bufferProxyId: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    bufferProxyUri: jspb.Message.getFieldWithDefault(msg, 3, "")
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.EditorProxyMetadata}
+ */
+proto.EditorProxyMetadata.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.EditorProxyMetadata;
+  return proto.EditorProxyMetadata.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.EditorProxyMetadata} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.EditorProxyMetadata}
+ */
+proto.EditorProxyMetadata.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setId(value);
+      break;
+    case 2:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setBufferProxyId(value);
+      break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setBufferProxyUri(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.EditorProxyMetadata.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.EditorProxyMetadata.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.EditorProxyMetadata} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.EditorProxyMetadata.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getId();
+  if (f !== 0) {
+    writer.writeUint32(
+      1,
+      f
+    );
+  }
+  f = message.getBufferProxyId();
+  if (f !== 0) {
+    writer.writeUint32(
+      2,
+      f
+    );
+  }
+  f = message.getBufferProxyUri();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional uint32 id = 1;
+ * @return {number}
+ */
+proto.EditorProxyMetadata.prototype.getId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/** @param {number} value */
+proto.EditorProxyMetadata.prototype.setId = function(value) {
+  jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional uint32 buffer_proxy_id = 2;
+ * @return {number}
+ */
+proto.EditorProxyMetadata.prototype.getBufferProxyId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/** @param {number} value */
+proto.EditorProxyMetadata.prototype.setBufferProxyId = function(value) {
+  jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * optional string buffer_proxy_uri = 3;
+ * @return {string}
+ */
+proto.EditorProxyMetadata.prototype.getBufferProxyUri = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/** @param {string} value */
+proto.EditorProxyMetadata.prototype.setBufferProxyUri = function(value) {
+  jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
@@ -2924,7 +3265,7 @@ proto.BufferProxy.prototype.getId = function() {
 
 /** @param {number} value */
 proto.BufferProxy.prototype.setId = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -2939,7 +3280,7 @@ proto.BufferProxy.prototype.getUri = function() {
 
 /** @param {string} value */
 proto.BufferProxy.prototype.setUri = function(value) {
-  jspb.Message.setField(this, 2, value);
+  jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
@@ -2986,18 +3327,37 @@ proto.BufferProxy.prototype.clearOperationsList = function() {
  * @constructor
  */
 proto.BufferProxyUpdate = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, proto.BufferProxyUpdate.repeatedFields_, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, null, proto.BufferProxyUpdate.oneofGroups_);
 };
 goog.inherits(proto.BufferProxyUpdate, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
   proto.BufferProxyUpdate.displayName = 'proto.BufferProxyUpdate';
 }
 /**
- * List of repeated fields within this message type.
- * @private {!Array<number>}
+ * Oneof group definitions for this message. Each group defines the field
+ * numbers belonging to that group. When of these fields' value is set, all
+ * other fields in the group are cleared. During deserialization, if multiple
+ * fields are encountered for a group, only the last value seen will be kept.
+ * @private {!Array<!Array<number>>}
  * @const
  */
-proto.BufferProxyUpdate.repeatedFields_ = [1];
+proto.BufferProxyUpdate.oneofGroups_ = [[2,3]];
+
+/**
+ * @enum {number}
+ */
+proto.BufferProxyUpdate.VariantCase = {
+  VARIANT_NOT_SET: 0,
+  OPERATIONS_UPDATE: 2,
+  URI_UPDATE: 3
+};
+
+/**
+ * @return {proto.BufferProxyUpdate.VariantCase}
+ */
+proto.BufferProxyUpdate.prototype.getVariantCase = function() {
+  return /** @type {proto.BufferProxyUpdate.VariantCase} */(jspb.Message.computeOneofCase(this, proto.BufferProxyUpdate.oneofGroups_[0]));
+};
 
 
 
@@ -3028,8 +3388,8 @@ proto.BufferProxyUpdate.prototype.toObject = function(opt_includeInstance) {
  */
 proto.BufferProxyUpdate.toObject = function(includeInstance, msg) {
   var f, obj = {
-    operationsList: jspb.Message.toObjectList(msg.getOperationsList(),
-    teletype$crdt_pb.Operation.toObject, includeInstance)
+    operationsUpdate: (f = msg.getOperationsUpdate()) && proto.BufferProxyUpdate.OperationsUpdate.toObject(includeInstance, f),
+    uriUpdate: (f = msg.getUriUpdate()) && proto.BufferProxyUpdate.URIUpdate.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -3066,10 +3426,15 @@ proto.BufferProxyUpdate.deserializeBinaryFromReader = function(msg, reader) {
     }
     var field = reader.getFieldNumber();
     switch (field) {
-    case 1:
-      var value = new teletype$crdt_pb.Operation;
-      reader.readMessage(value,teletype$crdt_pb.Operation.deserializeBinaryFromReader);
-      msg.addOperations(value);
+    case 2:
+      var value = new proto.BufferProxyUpdate.OperationsUpdate;
+      reader.readMessage(value,proto.BufferProxyUpdate.OperationsUpdate.deserializeBinaryFromReader);
+      msg.setOperationsUpdate(value);
+      break;
+    case 3:
+      var value = new proto.BufferProxyUpdate.URIUpdate;
+      reader.readMessage(value,proto.BufferProxyUpdate.URIUpdate.deserializeBinaryFromReader);
+      msg.setUriUpdate(value);
       break;
     default:
       reader.skipField();
@@ -3100,6 +3465,151 @@ proto.BufferProxyUpdate.prototype.serializeBinary = function() {
  */
 proto.BufferProxyUpdate.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getOperationsUpdate();
+  if (f != null) {
+    writer.writeMessage(
+      2,
+      f,
+      proto.BufferProxyUpdate.OperationsUpdate.serializeBinaryToWriter
+    );
+  }
+  f = message.getUriUpdate();
+  if (f != null) {
+    writer.writeMessage(
+      3,
+      f,
+      proto.BufferProxyUpdate.URIUpdate.serializeBinaryToWriter
+    );
+  }
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.BufferProxyUpdate.OperationsUpdate = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.BufferProxyUpdate.OperationsUpdate.repeatedFields_, null);
+};
+goog.inherits(proto.BufferProxyUpdate.OperationsUpdate, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.BufferProxyUpdate.OperationsUpdate.displayName = 'proto.BufferProxyUpdate.OperationsUpdate';
+}
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.BufferProxyUpdate.OperationsUpdate.repeatedFields_ = [1];
+
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.BufferProxyUpdate.OperationsUpdate.prototype.toObject = function(opt_includeInstance) {
+  return proto.BufferProxyUpdate.OperationsUpdate.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.BufferProxyUpdate.OperationsUpdate} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.BufferProxyUpdate.OperationsUpdate.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    operationsList: jspb.Message.toObjectList(msg.getOperationsList(),
+    teletype$crdt_pb.Operation.toObject, includeInstance)
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.BufferProxyUpdate.OperationsUpdate}
+ */
+proto.BufferProxyUpdate.OperationsUpdate.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.BufferProxyUpdate.OperationsUpdate;
+  return proto.BufferProxyUpdate.OperationsUpdate.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.BufferProxyUpdate.OperationsUpdate} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.BufferProxyUpdate.OperationsUpdate}
+ */
+proto.BufferProxyUpdate.OperationsUpdate.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = new teletype$crdt_pb.Operation;
+      reader.readMessage(value,teletype$crdt_pb.Operation.deserializeBinaryFromReader);
+      msg.addOperations(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.BufferProxyUpdate.OperationsUpdate.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.BufferProxyUpdate.OperationsUpdate.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.BufferProxyUpdate.OperationsUpdate} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.BufferProxyUpdate.OperationsUpdate.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
   f = message.getOperationsList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
@@ -3115,14 +3625,14 @@ proto.BufferProxyUpdate.serializeBinaryToWriter = function(message, writer) {
  * repeated Operation operations = 1;
  * @return {!Array.<!proto.Operation>}
  */
-proto.BufferProxyUpdate.prototype.getOperationsList = function() {
+proto.BufferProxyUpdate.OperationsUpdate.prototype.getOperationsList = function() {
   return /** @type{!Array.<!proto.Operation>} */ (
     jspb.Message.getRepeatedWrapperField(this, teletype$crdt_pb.Operation, 1));
 };
 
 
 /** @param {!Array.<!proto.Operation>} value */
-proto.BufferProxyUpdate.prototype.setOperationsList = function(value) {
+proto.BufferProxyUpdate.OperationsUpdate.prototype.setOperationsList = function(value) {
   jspb.Message.setRepeatedWrapperField(this, 1, value);
 };
 
@@ -3132,13 +3642,215 @@ proto.BufferProxyUpdate.prototype.setOperationsList = function(value) {
  * @param {number=} opt_index
  * @return {!proto.Operation}
  */
-proto.BufferProxyUpdate.prototype.addOperations = function(opt_value, opt_index) {
+proto.BufferProxyUpdate.OperationsUpdate.prototype.addOperations = function(opt_value, opt_index) {
   return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.Operation, opt_index);
 };
 
 
-proto.BufferProxyUpdate.prototype.clearOperationsList = function() {
+proto.BufferProxyUpdate.OperationsUpdate.prototype.clearOperationsList = function() {
   this.setOperationsList([]);
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.BufferProxyUpdate.URIUpdate = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.BufferProxyUpdate.URIUpdate, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.BufferProxyUpdate.URIUpdate.displayName = 'proto.BufferProxyUpdate.URIUpdate';
+}
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.BufferProxyUpdate.URIUpdate.prototype.toObject = function(opt_includeInstance) {
+  return proto.BufferProxyUpdate.URIUpdate.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.BufferProxyUpdate.URIUpdate} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.BufferProxyUpdate.URIUpdate.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    uri: jspb.Message.getFieldWithDefault(msg, 1, "")
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.BufferProxyUpdate.URIUpdate}
+ */
+proto.BufferProxyUpdate.URIUpdate.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.BufferProxyUpdate.URIUpdate;
+  return proto.BufferProxyUpdate.URIUpdate.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.BufferProxyUpdate.URIUpdate} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.BufferProxyUpdate.URIUpdate}
+ */
+proto.BufferProxyUpdate.URIUpdate.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setUri(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.BufferProxyUpdate.URIUpdate.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.BufferProxyUpdate.URIUpdate.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.BufferProxyUpdate.URIUpdate} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.BufferProxyUpdate.URIUpdate.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getUri();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional string uri = 1;
+ * @return {string}
+ */
+proto.BufferProxyUpdate.URIUpdate.prototype.getUri = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/** @param {string} value */
+proto.BufferProxyUpdate.URIUpdate.prototype.setUri = function(value) {
+  jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional OperationsUpdate operations_update = 2;
+ * @return {?proto.BufferProxyUpdate.OperationsUpdate}
+ */
+proto.BufferProxyUpdate.prototype.getOperationsUpdate = function() {
+  return /** @type{?proto.BufferProxyUpdate.OperationsUpdate} */ (
+    jspb.Message.getWrapperField(this, proto.BufferProxyUpdate.OperationsUpdate, 2));
+};
+
+
+/** @param {?proto.BufferProxyUpdate.OperationsUpdate|undefined} value */
+proto.BufferProxyUpdate.prototype.setOperationsUpdate = function(value) {
+  jspb.Message.setOneofWrapperField(this, 2, proto.BufferProxyUpdate.oneofGroups_[0], value);
+};
+
+
+proto.BufferProxyUpdate.prototype.clearOperationsUpdate = function() {
+  this.setOperationsUpdate(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {!boolean}
+ */
+proto.BufferProxyUpdate.prototype.hasOperationsUpdate = function() {
+  return jspb.Message.getField(this, 2) != null;
+};
+
+
+/**
+ * optional URIUpdate uri_update = 3;
+ * @return {?proto.BufferProxyUpdate.URIUpdate}
+ */
+proto.BufferProxyUpdate.prototype.getUriUpdate = function() {
+  return /** @type{?proto.BufferProxyUpdate.URIUpdate} */ (
+    jspb.Message.getWrapperField(this, proto.BufferProxyUpdate.URIUpdate, 3));
+};
+
+
+/** @param {?proto.BufferProxyUpdate.URIUpdate|undefined} value */
+proto.BufferProxyUpdate.prototype.setUriUpdate = function(value) {
+  jspb.Message.setOneofWrapperField(this, 3, proto.BufferProxyUpdate.oneofGroups_[0], value);
+};
+
+
+proto.BufferProxyUpdate.prototype.clearUriUpdate = function() {
+  this.setUriUpdate(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {!boolean}
+ */
+proto.BufferProxyUpdate.prototype.hasUriUpdate = function() {
+  return jspb.Message.getField(this, 3) != null;
 };
 
 
@@ -3476,7 +4188,7 @@ proto.RouterMessage.Notification.prototype.getChannelId = function() {
 
 /** @param {string} value */
 proto.RouterMessage.Notification.prototype.setChannelId = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -3515,7 +4227,7 @@ proto.RouterMessage.Notification.prototype.getBody_asU8 = function() {
 
 /** @param {!(string|Uint8Array)} value */
 proto.RouterMessage.Notification.prototype.setBody = function(value) {
-  jspb.Message.setField(this, 2, value);
+  jspb.Message.setProto3BytesField(this, 2, value);
 };
 
 
@@ -3681,7 +4393,7 @@ proto.RouterMessage.Request.prototype.getChannelId = function() {
 
 /** @param {string} value */
 proto.RouterMessage.Request.prototype.setChannelId = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -3696,7 +4408,7 @@ proto.RouterMessage.Request.prototype.getRequestId = function() {
 
 /** @param {number} value */
 proto.RouterMessage.Request.prototype.setRequestId = function(value) {
-  jspb.Message.setField(this, 2, value);
+  jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
@@ -3735,7 +4447,7 @@ proto.RouterMessage.Request.prototype.getBody_asU8 = function() {
 
 /** @param {!(string|Uint8Array)} value */
 proto.RouterMessage.Request.prototype.setBody = function(value) {
-  jspb.Message.setField(this, 3, value);
+  jspb.Message.setProto3BytesField(this, 3, value);
 };
 
 
@@ -3901,7 +4613,7 @@ proto.RouterMessage.Response.prototype.getRequestId = function() {
 
 /** @param {number} value */
 proto.RouterMessage.Response.prototype.setRequestId = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -3940,7 +4652,7 @@ proto.RouterMessage.Response.prototype.getBody_asU8 = function() {
 
 /** @param {!(string|Uint8Array)} value */
 proto.RouterMessage.Response.prototype.setBody = function(value) {
-  jspb.Message.setField(this, 2, value);
+  jspb.Message.setProto3BytesField(this, 2, value);
 };
 
 
@@ -3957,7 +4669,7 @@ proto.RouterMessage.Response.prototype.getOk = function() {
 
 /** @param {boolean} value */
 proto.RouterMessage.Response.prototype.setOk = function(value) {
-  jspb.Message.setField(this, 3, value);
+  jspb.Message.setProto3BooleanField(this, 3, value);
 };
 
 
@@ -4430,7 +5142,7 @@ proto.NetworkMessage.StarJoinRequest.prototype.getSenderId = function() {
 
 /** @param {string} value */
 proto.NetworkMessage.StarJoinRequest.prototype.setSenderId = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -4730,7 +5442,7 @@ proto.NetworkMessage.StarJoinNotification.prototype.getMemberId = function() {
 
 /** @param {string} value */
 proto.NetworkMessage.StarJoinNotification.prototype.setMemberId = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -4914,7 +5626,7 @@ proto.NetworkMessage.StarLeaveNotification.prototype.getMemberId = function() {
 
 /** @param {string} value */
 proto.NetworkMessage.StarLeaveNotification.prototype.setMemberId = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -4931,7 +5643,7 @@ proto.NetworkMessage.StarLeaveNotification.prototype.getConnectionLost = functio
 
 /** @param {boolean} value */
 proto.NetworkMessage.StarLeaveNotification.prototype.setConnectionLost = function(value) {
-  jspb.Message.setField(this, 2, value);
+  jspb.Message.setProto3BooleanField(this, 2, value);
 };
 
 
@@ -5097,7 +5809,7 @@ proto.NetworkMessage.StarUnicast.prototype.getSenderId = function() {
 
 /** @param {string} value */
 proto.NetworkMessage.StarUnicast.prototype.setSenderId = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -5112,7 +5824,7 @@ proto.NetworkMessage.StarUnicast.prototype.getRecipientId = function() {
 
 /** @param {string} value */
 proto.NetworkMessage.StarUnicast.prototype.setRecipientId = function(value) {
-  jspb.Message.setField(this, 2, value);
+  jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
@@ -5151,7 +5863,7 @@ proto.NetworkMessage.StarUnicast.prototype.getBody_asU8 = function() {
 
 /** @param {!(string|Uint8Array)} value */
 proto.NetworkMessage.StarUnicast.prototype.setBody = function(value) {
-  jspb.Message.setField(this, 3, value);
+  jspb.Message.setProto3BytesField(this, 3, value);
 };
 
 
@@ -5305,7 +6017,7 @@ proto.NetworkMessage.StarBroadcast.prototype.getSenderId = function() {
 
 /** @param {string} value */
 proto.NetworkMessage.StarBroadcast.prototype.setSenderId = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -5344,7 +6056,7 @@ proto.NetworkMessage.StarBroadcast.prototype.getBody_asU8 = function() {
 
 /** @param {!(string|Uint8Array)} value */
 proto.NetworkMessage.StarBroadcast.prototype.setBody = function(value) {
-  jspb.Message.setField(this, 2, value);
+  jspb.Message.setProto3BytesField(this, 2, value);
 };
 
 
@@ -5359,7 +6071,7 @@ proto.NetworkMessage.prototype.getNetworkId = function() {
 
 /** @param {string} value */
 proto.NetworkMessage.prototype.setNetworkId = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -5681,11 +6393,38 @@ proto.PeerIdentity.prototype.getLogin = function() {
 
 /** @param {string} value */
 proto.PeerIdentity.prototype.setLogin = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
 goog.object.extend(exports, proto);
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
 
 
 /***/ }),
@@ -5703,9 +6442,9 @@ goog.object.extend(exports, proto);
 
 
 
-var base64 = __webpack_require__(22)
-var ieee754 = __webpack_require__(23)
-var isArray = __webpack_require__(24)
+var base64 = __webpack_require__(23)
+var ieee754 = __webpack_require__(24)
+var isArray = __webpack_require__(25)
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -7483,7 +8222,7 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
 /* 7 */
@@ -7911,7 +8650,7 @@ jspb.BinaryReader.prototype.readPackedSfixed32=function(){return this.readPacked
 jspb.BinaryReader.prototype.readPackedDouble=function(){return this.readPackedField_(this.decoder_.readDouble)};jspb.BinaryReader.prototype.readPackedBool=function(){return this.readPackedField_(this.decoder_.readBool)};jspb.BinaryReader.prototype.readPackedEnum=function(){return this.readPackedField_(this.decoder_.readEnum)};jspb.BinaryReader.prototype.readPackedVarintHash64=function(){return this.readPackedField_(this.decoder_.readVarintHash64)};
 jspb.BinaryReader.prototype.readPackedFixedHash64=function(){return this.readPackedField_(this.decoder_.readFixedHash64)};jspb.Export={};exports.Map=jspb.Map;exports.Message=jspb.Message;exports.BinaryReader=jspb.BinaryReader;exports.BinaryWriter=jspb.BinaryWriter;exports.ExtensionFieldInfo=jspb.ExtensionFieldInfo;exports.ExtensionFieldBinaryInfo=jspb.ExtensionFieldBinaryInfo;exports.exportSymbol=goog.exportSymbol;exports.inherits=goog.inherits;exports.object={extend:goog.object.extend};exports.typeOf=goog.typeOf;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
 /* 10 */
@@ -8385,9 +9124,9 @@ SDPUtils.writeCandidate = function(candidate) {
     sdp.push('tcptype');
     sdp.push(candidate.tcpType);
   }
-  if (candidate.ufrag) {
+  if (candidate.usernameFragment || candidate.ufrag) {
     sdp.push('ufrag');
-    sdp.push(candidate.ufrag);
+    sdp.push(candidate.usernameFragment || candidate.ufrag);
   }
   return 'candidate:' + sdp.join(' ');
 };
@@ -8948,11 +9687,11 @@ if (true) {
 /* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const Document = __webpack_require__(51)
+const Document = __webpack_require__(52)
 const {
   serializeOperation, deserializeOperation,
   serializeRemotePosition, deserializeRemotePosition
-} = __webpack_require__(54)
+} = __webpack_require__(55)
 
 module.exports = {
   Document,
@@ -9070,21 +9809,76 @@ class SplayTree {
 /* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(19).default;
+const Messages = __webpack_require__(4)
+const {CompositeDisposable} = __webpack_require__(1)
+const NOOP = () => {}
+
+module.exports =
+class EditorProxyMetadata {
+  static deserialize (message, props) {
+    return new EditorProxyMetadata(Object.assign({
+      id: message.getId(),
+      bufferProxyId: message.getBufferProxyId(),
+      bufferProxyURI: message.getBufferProxyUri()
+    }, props))
+  }
+
+  constructor ({id, bufferProxyId, bufferProxyURI, siteId, router, didDispose}) {
+    this.id = id
+    this.bufferProxyId = bufferProxyId
+    this.bufferProxyURI = bufferProxyURI
+    this.subscriptions = new CompositeDisposable()
+    this.didDispose = didDispose || NOOP
+    if (didDispose) {
+      this.subscriptions.add(
+        router.onNotification(`/buffers/${id}`, this.receiveBufferUpdate.bind(this))
+      )
+      this.subscriptions.add(
+        router.onNotification(`/editors/${id}/disposal`, this.dispose.bind(this))
+      )
+    }
+  }
+
+  dispose () {
+    this.subscriptions.dispose()
+    this.didDispose()
+  }
+
+  serialize () {
+    const message = new Messages.EditorProxyMetadata()
+    message.setId(this.id)
+    message.setBufferProxyId(this.bufferProxyId)
+    message.setBufferProxyUri(this.bufferProxyURI)
+    return message
+  }
+
+  receiveBufferUpdate ({body}) {
+    const updateMessage = Messages.BufferProxyUpdate.deserializeBinary(body)
+    if (updateMessage.hasUriUpdate()) {
+      this.bufferProxyURI = updateMessage.getUriUpdate().getUri()
+    }
+  }
+}
+
 
 /***/ }),
 /* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(20).default;
+
+/***/ }),
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__atom_teletype_client__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__atom_teletype_client__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__atom_teletype_client___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__atom_teletype_client__);
 
-const FakeBufferDelegate = __webpack_require__(63);
-// const FakeBufferDelegate = require('./che-buffer-binding')
-const FakeEditorDelegate = __webpack_require__(64);
-const FakePortalDelegate = __webpack_require__(65);
+const FakeBufferDelegate = __webpack_require__(64);
+const FakeEditorDelegate = __webpack_require__(65);
+const FakePortalDelegate = __webpack_require__(66);
 
 /* harmony default export */ __webpack_exports__["default"] = (class {
 
@@ -9142,87 +9936,14 @@ const FakePortalDelegate = __webpack_require__(65);
     guestBufferProxy.setDelegate(guestBufferDelegate);
 
     guestBufferProxy.setTextInRange(...guestBufferDelegate.insert({ row: 0, column: 0 }, 'hello from a browser\n'));
-
-    /*        guestEditorDelegate.updateViewport(15, 5)
-    
-    
-            assert.deepEqual(guestEditorDelegate.getSelectionsForSiteId(1), {
-            1: {
-            range: {start: {row: 0, column: 0}, end: {row: 0, column: 5}},
-            exclusive: false,
-            reversed: false,
-            tailed: true
-          },
-          2: {
-            range: {start: {row: 0, column: 6}, end: {row: 0, column: 11}},
-            exclusive: false,
-            reversed: false,
-            tailed: true
-          }
-        })
-        assert.equal(guestBufferProxy.uri, 'uri-1')
-        assert.equal(guestBufferDelegate.getText(), 'hello world!')
-        hostBufferProxy.setTextInRange(...hostBufferDelegate.insert({row: 0, column: 5}, ' cruel'))
-        guestBufferProxy.setTextInRange(...guestBufferDelegate.delete({row: 0, column: 0}, {row: 0, column: 5}))
-        guestBufferProxy.setTextInRange(...guestBufferDelegate.insert({row: 0, column: 0}, 'goodbye'))
-    
-        await condition(() => hostBufferDelegate.text === 'goodbye cruel world!')
-        await condition(() => guestBufferDelegate.text === 'goodbye cruel world!')
-    
-        hostEditorProxy.updateSelections({
-          1: {
-            range: {start: {row: 0, column: 6}, end: {row: 0, column: 11}}
-          },
-          2: null
-        })
-        guestEditorProxy.updateSelections({
-          1: {
-            range: {start: {row: 0, column: 2}, end: {row: 0, column: 4}}
-          },
-          2: {
-            range: {start: {row: 0, column: 6}, end: {row: 0, column: 8}}
-          }
-        })
-    
-        const expectedGuestSelectionsOnHost = {
-          1: {
-            range: {start: {row: 0, column: 2}, end: {row: 0, column: 4}},
-            exclusive: false,
-            reversed: false,
-            tailed: true
-          },
-          2: {
-            range: {start: {row: 0, column: 6}, end: {row: 0, column: 8}},
-            exclusive: false,
-            reversed: false,
-            tailed: true
-          }
-        }
-    
-        const expectedHostSelectionsOnGuest = {
-          1: {
-            range: {start: {row: 0, column: 6}, end: {row: 0, column: 11}},
-            exclusive: false,
-            reversed: false,
-            tailed: true
-          }
-        }
-    
-        await condition(() => {
-          return (
-            deepEqual(guestEditorDelegate.getSelectionsForSiteId(1), expectedHostSelectionsOnGuest) &&
-            deepEqual(hostEditorDelegate.getSelectionsForSiteId(2), expectedGuestSelectionsOnHost)
-          )
-        })
-    */
   }
 });;
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const TeletypeClient = __webpack_require__(21)
+const TeletypeClient = __webpack_require__(22)
 const FollowState = __webpack_require__(11)
 const Errors = __webpack_require__(3)
 
@@ -9230,21 +9951,21 @@ module.exports = {TeletypeClient, FollowState, Errors}
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {const os = __webpack_require__(25)
-const uuidV1 = __webpack_require__(26)
-const uuidV4 = __webpack_require__(27)
-const PeerPool = __webpack_require__(28)
-const Portal = __webpack_require__(47)
+/* WEBPACK VAR INJECTION */(function(Buffer) {const os = __webpack_require__(26)
+const uuidV1 = __webpack_require__(27)
+const uuidV4 = __webpack_require__(28)
+const PeerPool = __webpack_require__(29)
+const Portal = __webpack_require__(48)
 const Errors = __webpack_require__(3)
-const PusherPubSubGateway = __webpack_require__(60)
-const RestGateway = __webpack_require__(62)
+const PusherPubSubGateway = __webpack_require__(61)
+const RestGateway = __webpack_require__(63)
 const {Emitter} = __webpack_require__(1)
 const NOOP = () => {}
 const DEFAULT_TETHER_DISCONNECT_WINDOW = 1000
-const LOCAL_PROTOCOL_VERSION = 6
+const LOCAL_PROTOCOL_VERSION = 9
 
 module.exports =
 class TeletypeClient {
@@ -9432,7 +10153,7 @@ class TeletypeClient {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6).Buffer))
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9452,6 +10173,8 @@ for (var i = 0, len = code.length; i < len; ++i) {
   revLookup[code.charCodeAt(i)] = i
 }
 
+// Support decoding URL-safe base64 strings, as Node.js does.
+// See: https://en.wikipedia.org/wiki/Base64#URL_applications
 revLookup['-'.charCodeAt(0)] = 62
 revLookup['_'.charCodeAt(0)] = 63
 
@@ -9513,7 +10236,7 @@ function encodeChunk (uint8, start, end) {
   var tmp
   var output = []
   for (var i = start; i < end; i += 3) {
-    tmp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
+    tmp = ((uint8[i] << 16) & 0xFF0000) + ((uint8[i + 1] << 8) & 0xFF00) + (uint8[i + 2] & 0xFF)
     output.push(tripletToBase64(tmp))
   }
   return output.join('')
@@ -9553,12 +10276,12 @@ function fromByteArray (uint8) {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
-  var eLen = nBytes * 8 - mLen - 1
+  var eLen = (nBytes * 8) - mLen - 1
   var eMax = (1 << eLen) - 1
   var eBias = eMax >> 1
   var nBits = -7
@@ -9571,12 +10294,12 @@ exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   e = s & ((1 << (-nBits)) - 1)
   s >>= (-nBits)
   nBits += eLen
-  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+  for (; nBits > 0; e = (e * 256) + buffer[offset + i], i += d, nBits -= 8) {}
 
   m = e & ((1 << (-nBits)) - 1)
   e >>= (-nBits)
   nBits += mLen
-  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+  for (; nBits > 0; m = (m * 256) + buffer[offset + i], i += d, nBits -= 8) {}
 
   if (e === 0) {
     e = 1 - eBias
@@ -9591,7 +10314,7 @@ exports.read = function (buffer, offset, isLE, mLen, nBytes) {
 
 exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   var e, m, c
-  var eLen = nBytes * 8 - mLen - 1
+  var eLen = (nBytes * 8) - mLen - 1
   var eMax = (1 << eLen) - 1
   var eBias = eMax >> 1
   var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
@@ -9624,7 +10347,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
       m = 0
       e = eMax
     } else if (e + eBias >= 1) {
-      m = (value * c - 1) * Math.pow(2, mLen)
+      m = ((value * c) - 1) * Math.pow(2, mLen)
       e = e + eBias
     } else {
       m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
@@ -9643,7 +10366,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports) {
 
 var toString = {}.toString;
@@ -9654,7 +10377,7 @@ module.exports = Array.isArray || function (arr) {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports) {
 
 exports.endianness = function () { return 'LE' };
@@ -9709,7 +10432,7 @@ exports.homedir = function () {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var rng = __webpack_require__(12);
@@ -9824,7 +10547,7 @@ module.exports = v1;
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var rng = __webpack_require__(12);
@@ -9859,13 +10582,13 @@ module.exports = v4;
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const assert = __webpack_require__(0)
 const {CompositeDisposable, Disposable, Emitter} = __webpack_require__(1)
-const PeerConnection = __webpack_require__(34)
-const PubSubSignalingProvider = __webpack_require__(46)
+const PeerConnection = __webpack_require__(35)
+const PubSubSignalingProvider = __webpack_require__(47)
 const Errors = __webpack_require__(3)
 
 module.exports =
@@ -10057,7 +10780,7 @@ class PeerPool {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -10585,7 +11308,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-exports.isBuffer = __webpack_require__(30);
+exports.isBuffer = __webpack_require__(31);
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -10629,7 +11352,7 @@ exports.log = function() {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-exports.inherits = __webpack_require__(31);
+exports.inherits = __webpack_require__(32);
 
 exports._extend = function(origin, add) {
   // Don't do anything if add isn't an object
@@ -10647,10 +11370,10 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4), __webpack_require__(14)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5), __webpack_require__(14)))
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports) {
 
 module.exports = function isBuffer(arg) {
@@ -10661,7 +11384,7 @@ module.exports = function isBuffer(arg) {
 }
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports) {
 
 if (typeof Object.create === 'function') {
@@ -10690,7 +11413,7 @@ if (typeof Object.create === 'function') {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function() {
@@ -10883,7 +11606,7 @@ if (typeof Object.create === 'function') {
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function() {
@@ -10967,10 +11690,10 @@ if (typeof Object.create === 'function') {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(process, Buffer) {__webpack_require__(35)
+/* WEBPACK VAR INJECTION */(function(process, Buffer) {__webpack_require__(36)
 
 const MAX_SEND_RETRY_COUNT = 5
 const MULTIPART_MASK = 0b00000001
@@ -11054,7 +11777,7 @@ class PeerConnection {
     this.didDisconnect(this.remotePeerId)
     this.resolveDisconnectedPromise()
 
-    // Get channel a chance to flush. This helps avoid flaky tests where
+    // Give channel a chance to flush. This helps avoid flaky tests where
     // the a star network hub disconnects all its peers and needs to
     // inform the remaining peers of the disconnection as each peer leaves.
     process.nextTick(() => {
@@ -11251,7 +11974,7 @@ class PeerConnection {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14), __webpack_require__(6).Buffer))
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11266,13 +11989,13 @@ class PeerConnection {
 
 
 
-var adapterFactory = __webpack_require__(36);
+var adapterFactory = __webpack_require__(37);
 module.exports = adapterFactory({window: global.window});
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11316,11 +12039,11 @@ module.exports = function(dependencies, opts) {
   // require('./utils').disableLog(false);
 
   // Browser shims.
-  var chromeShim = __webpack_require__(37) || null;
-  var edgeShim = __webpack_require__(39) || null;
-  var firefoxShim = __webpack_require__(42) || null;
-  var safariShim = __webpack_require__(44) || null;
-  var commonShim = __webpack_require__(45) || null;
+  var chromeShim = __webpack_require__(38) || null;
+  var edgeShim = __webpack_require__(40) || null;
+  var firefoxShim = __webpack_require__(43) || null;
+  var safariShim = __webpack_require__(45) || null;
+  var commonShim = __webpack_require__(46) || null;
 
   // Export to the adapter global object visible in the browser.
   var adapter = {
@@ -11428,7 +12151,7 @@ module.exports = function(dependencies, opts) {
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11446,7 +12169,7 @@ var utils = __webpack_require__(2);
 var logging = utils.log;
 
 module.exports = {
-  shimGetUserMedia: __webpack_require__(38),
+  shimGetUserMedia: __webpack_require__(39),
   shimMediaStream: function(window) {
     window.MediaStream = window.MediaStream || window.webkitMediaStream;
   },
@@ -12180,7 +12903,7 @@ module.exports = {
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12322,12 +13045,16 @@ module.exports = function(window) {
     return {
       name: {
         PermissionDeniedError: 'NotAllowedError',
-        InvalidStateError: 'NotReadableError',
+        PermissionDismissedError: 'NotAllowedError',
+        InvalidStateError: 'NotAllowedError',
         DevicesNotFoundError: 'NotFoundError',
         ConstraintNotSatisfiedError: 'OverconstrainedError',
         TrackStartError: 'NotReadableError',
-        MediaDeviceFailedDueToShutdown: 'NotReadableError',
-        MediaDeviceKillSwitchOn: 'NotReadableError'
+        MediaDeviceFailedDueToShutdown: 'NotAllowedError',
+        MediaDeviceKillSwitchOn: 'NotAllowedError',
+        TabCaptureError: 'AbortError',
+        ScreenCaptureError: 'AbortError',
+        DeviceCaptureError: 'AbortError'
       }[e.name] || e.name,
       message: e.message,
       constraint: e.constraintName,
@@ -12427,7 +13154,7 @@ module.exports = function(window) {
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12442,24 +13169,19 @@ module.exports = function(window) {
 
 
 var utils = __webpack_require__(2);
-var shimRTCPeerConnection = __webpack_require__(40);
+var shimRTCPeerConnection = __webpack_require__(41);
 
 module.exports = {
-  shimGetUserMedia: __webpack_require__(41),
+  shimGetUserMedia: __webpack_require__(42),
   shimPeerConnection: function(window) {
     var browserDetails = utils.detectBrowser(window);
 
     if (window.RTCIceGatherer) {
-      // ORTC defines an RTCIceCandidate object but no constructor.
-      // Not implemented in Edge.
       if (!window.RTCIceCandidate) {
         window.RTCIceCandidate = function(args) {
           return args;
         };
       }
-      // ORTC does not have a session description object but
-      // other browsers (i.e. Chrome) that will support both PC and ORTC
-      // in the future might have this defined already.
       if (!window.RTCSessionDescription) {
         window.RTCSessionDescription = function(args) {
           return args;
@@ -12498,6 +13220,11 @@ module.exports = {
         }
       });
     }
+    // Edge currently only implements the RTCDtmfSender, not the
+    // RTCDTMFSender alias. See http://draft.ortc.org/#rtcdtmfsender2*
+    if (window.RTCDtmfSender && !window.RTCDTMFSender) {
+      window.RTCDTMFSender = window.RTCDtmfSender;
+    }
 
     window.RTCPeerConnection =
         shimRTCPeerConnection(window, browserDetails.version);
@@ -12514,7 +13241,7 @@ module.exports = {
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12529,6 +13256,16 @@ module.exports = {
 
 
 var SDPUtils = __webpack_require__(15);
+
+function fixStatsType(stat) {
+  return {
+    inboundrtp: 'inbound-rtp',
+    outboundrtp: 'outbound-rtp',
+    candidatepair: 'candidate-pair',
+    localcandidate: 'local-candidate',
+    remotecandidate: 'remote-candidate'
+  }[stat.type] || stat.type;
+}
 
 function writeMediaSection(transceiver, caps, type, stream, dtlsRole) {
   var sdp = SDPUtils.writeRtpDescription(transceiver.kind, caps);
@@ -12739,6 +13476,14 @@ function maybeAddCandidate(iceTransport, candidate) {
 function makeError(name, description) {
   var e = new Error(description);
   e.name = name;
+  // legacy error codes from https://heycam.github.io/webidl/#idl-DOMException-error-names
+  e.code = {
+    NotSupportedError: 9,
+    InvalidStateError: 11,
+    InvalidAccessError: 15,
+    TypeError: undefined,
+    OperationError: undefined
+  }[name];
   return e;
 }
 
@@ -12790,6 +13535,7 @@ module.exports = function(window, edgeVersion) {
 
     this.signalingState = 'stable';
     this.iceConnectionState = 'new';
+    this.connectionState = 'new';
     this.iceGatheringState = 'new';
 
     config = JSON.parse(JSON.stringify(config || {}));
@@ -12856,6 +13602,7 @@ module.exports = function(window, edgeVersion) {
   RTCPeerConnection.prototype.onremovestream = null;
   RTCPeerConnection.prototype.onsignalingstatechange = null;
   RTCPeerConnection.prototype.oniceconnectionstatechange = null;
+  RTCPeerConnection.prototype.onconnectionstatechange = null;
   RTCPeerConnection.prototype.onicegatheringstatechange = null;
   RTCPeerConnection.prototype.onnegotiationneeded = null;
   RTCPeerConnection.prototype.ondatachannel = null;
@@ -12888,8 +13635,8 @@ module.exports = function(window, edgeVersion) {
   };
 
   // internal helper to create a transceiver object.
-  // (whih is not yet the same as the WebRTC 1.0 transceiver)
-  RTCPeerConnection.prototype._createTransceiver = function(kind) {
+  // (which is not yet the same as the WebRTC 1.0 transceiver)
+  RTCPeerConnection.prototype._createTransceiver = function(kind, doNotAdd) {
     var hasBundleTransport = this.transceivers.length > 0;
     var transceiver = {
       track: null,
@@ -12916,7 +13663,9 @@ module.exports = function(window, edgeVersion) {
       transceiver.iceTransport = transports.iceTransport;
       transceiver.dtlsTransport = transports.dtlsTransport;
     }
-    this.transceivers.push(transceiver);
+    if (!doNotAdd) {
+      this.transceivers.push(transceiver);
+    }
     return transceiver;
   };
 
@@ -13118,10 +13867,22 @@ module.exports = function(window, edgeVersion) {
         }
         // RTCIceCandidate doesn't have a component, needs to be added
         cand.component = 1;
+        // also the usernameFragment. TODO: update SDP to take both variants.
+        cand.ufrag = iceGatherer.getLocalParameters().usernameFragment;
+
         var serializedCandidate = SDPUtils.writeCandidate(cand);
         event.candidate = Object.assign(event.candidate,
             SDPUtils.parseCandidate(serializedCandidate));
+
         event.candidate.candidate = serializedCandidate;
+        event.candidate.toJSON = function() {
+          return {
+            candidate: event.candidate.candidate,
+            sdpMid: event.candidate.sdpMid,
+            sdpMLineIndex: event.candidate.sdpMLineIndex,
+            usernameFragment: event.candidate.usernameFragment
+          };
+        };
       }
 
       // update local description.
@@ -13171,6 +13932,7 @@ module.exports = function(window, edgeVersion) {
     var pc = this;
     var iceTransport = new window.RTCIceTransport(null);
     iceTransport.onicestatechange = function() {
+      pc._updateIceConnectionState();
       pc._updateConnectionState();
     };
 
@@ -13240,6 +14002,8 @@ module.exports = function(window, edgeVersion) {
       }
       if (transceiver.recvEncodingParameters.length) {
         params.encodings = transceiver.recvEncodingParameters;
+      } else {
+        params.encodings = [{}];
       }
       params.rtcp = {
         compound: transceiver.rtcpParameters.compound
@@ -13302,7 +14066,7 @@ module.exports = function(window, edgeVersion) {
         var rejected = SDPUtils.isRejected(mediaSection) &&
             SDPUtils.matchPrefix(mediaSection, 'a=bundle-only').length === 0;
 
-        if (!rejected && !transceiver.isDatachannel) {
+        if (!rejected && !transceiver.rejected) {
           var remoteIceParameters = SDPUtils.getIceParameters(
               mediaSection, sessionpart);
           var remoteDtlsParameters = SDPUtils.getDtlsParameters(
@@ -13399,12 +14163,21 @@ module.exports = function(window, edgeVersion) {
       var mid = SDPUtils.getMid(mediaSection) || SDPUtils.generateIdentifier();
 
       // Reject datachannels which are not implemented yet.
-      if (kind === 'application' && protocol === 'DTLS/SCTP') {
+      if ((kind === 'application' && protocol === 'DTLS/SCTP') || rejected) {
+        // TODO: this is dangerous in the case where a non-rejected m-line
+        //     becomes rejected.
         pc.transceivers[sdpMLineIndex] = {
           mid: mid,
-          isDatachannel: true
+          kind: kind,
+          rejected: true
         };
         return;
+      }
+
+      if (!rejected && pc.transceivers[sdpMLineIndex] &&
+          pc.transceivers[sdpMLineIndex].rejected) {
+        // recycle a rejected transceiver.
+        pc.transceivers[sdpMLineIndex] = pc._createTransceiver(kind, true);
       }
 
       var transceiver;
@@ -13736,6 +14509,44 @@ module.exports = function(window, edgeVersion) {
     }, 0);
   };
 
+  // Update the ice connection state.
+  RTCPeerConnection.prototype._updateIceConnectionState = function() {
+    var newState;
+    var states = {
+      'new': 0,
+      closed: 0,
+      checking: 0,
+      connected: 0,
+      completed: 0,
+      disconnected: 0,
+      failed: 0
+    };
+    this.transceivers.forEach(function(transceiver) {
+      states[transceiver.iceTransport.state]++;
+    });
+
+    newState = 'new';
+    if (states.failed > 0) {
+      newState = 'failed';
+    } else if (states.checking > 0) {
+      newState = 'checking';
+    } else if (states.disconnected > 0) {
+      newState = 'disconnected';
+    } else if (states.new > 0) {
+      newState = 'new';
+    } else if (states.connected > 0) {
+      newState = 'connected';
+    } else if (states.completed > 0) {
+      newState = 'completed';
+    }
+
+    if (newState !== this.iceConnectionState) {
+      this.iceConnectionState = newState;
+      var event = new Event('iceconnectionstatechange');
+      this._dispatchEvent('iceconnectionstatechange', event);
+    }
+  };
+
   // Update the connection state.
   RTCPeerConnection.prototype._updateConnectionState = function() {
     var newState;
@@ -13743,7 +14554,6 @@ module.exports = function(window, edgeVersion) {
       'new': 0,
       closed: 0,
       connecting: 0,
-      checking: 0,
       connected: 0,
       completed: 0,
       disconnected: 0,
@@ -13759,20 +14569,20 @@ module.exports = function(window, edgeVersion) {
     newState = 'new';
     if (states.failed > 0) {
       newState = 'failed';
-    } else if (states.connecting > 0 || states.checking > 0) {
+    } else if (states.connecting > 0) {
       newState = 'connecting';
     } else if (states.disconnected > 0) {
       newState = 'disconnected';
     } else if (states.new > 0) {
       newState = 'new';
-    } else if (states.connected > 0 || states.completed > 0) {
+    } else if (states.connected > 0) {
       newState = 'connected';
     }
 
-    if (newState !== this.iceConnectionState) {
-      this.iceConnectionState = newState;
-      var event = new Event('iceconnectionstatechange');
-      this._dispatchEvent('iceconnectionstatechange', event);
+    if (newState !== this.connectionState) {
+      this.connectionState = newState;
+      var event = new Event('connectionstatechange');
+      this._dispatchEvent('connectionstatechange', event);
     }
   };
 
@@ -13963,6 +14773,12 @@ module.exports = function(window, edgeVersion) {
           'Can not call createAnswer after close'));
     }
 
+    if (!(pc.signalingState === 'have-remote-offer' ||
+        pc.signalingState === 'have-local-pranswer')) {
+      return Promise.reject(makeError('InvalidStateError',
+          'Can not call createAnswer in signalingState ' + pc.signalingState));
+    }
+
     var sdp = SDPUtils.writeSessionBoilerplate(pc._sdpSessionId,
         pc._sdpSessionVersion++);
     if (pc.usingBundle) {
@@ -13976,9 +14792,18 @@ module.exports = function(window, edgeVersion) {
       if (sdpMLineIndex + 1 > mediaSectionsInOffer) {
         return;
       }
-      if (transceiver.isDatachannel) {
-        sdp += 'm=application 0 DTLS/SCTP 5000\r\n' +
-            'c=IN IP4 0.0.0.0\r\n' +
+      if (transceiver.rejected) {
+        if (transceiver.kind === 'application') {
+          sdp += 'm=application 0 DTLS/SCTP 5000\r\n';
+        } else if (transceiver.kind === 'audio') {
+          sdp += 'm=audio 0 UDP/TLS/RTP/SAVPF 0\r\n' +
+              'a=rtpmap:0 PCMU/8000\r\n';
+        } else if (transceiver.kind === 'video') {
+          sdp += 'm=video 0 UDP/TLS/RTP/SAVPF 120\r\n' +
+              'a=rtpmap:120 VP8/90000\r\n';
+        }
+        sdp += 'c=IN IP4 0.0.0.0\r\n' +
+            'a=inactive\r\n' +
             'a=mid:' + transceiver.mid + '\r\n';
         return;
       }
@@ -14044,7 +14869,7 @@ module.exports = function(window, edgeVersion) {
             'Can not add ICE candidate without a remote description'));
       } else if (!candidate || candidate.candidate === '') {
         for (var j = 0; j < pc.transceivers.length; j++) {
-          if (pc.transceivers[j].isDatachannel) {
+          if (pc.transceivers[j].rejected) {
             continue;
           }
           pc.transceivers[j].iceTransport.addRemoteCandidate({});
@@ -14069,7 +14894,7 @@ module.exports = function(window, edgeVersion) {
         }
         var transceiver = pc.transceivers[sdpMLineIndex];
         if (transceiver) {
-          if (transceiver.isDatachannel) {
+          if (transceiver.rejected) {
             return resolve();
           }
           var cand = Object.keys(candidate.candidate).length > 0 ?
@@ -14101,7 +14926,9 @@ module.exports = function(window, edgeVersion) {
           sections[sdpMLineIndex] += 'a=' +
               (cand.type ? candidateString : 'end-of-candidates')
               + '\r\n';
-          pc.remoteDescription.sdp = sections.join('');
+          pc.remoteDescription.sdp =
+              SDPUtils.getDescription(pc.remoteDescription.sdp) +
+              sections.join('');
         } else {
           return reject(makeError('OperationError',
               'Can not add ICE candidate'));
@@ -14111,7 +14938,24 @@ module.exports = function(window, edgeVersion) {
     });
   };
 
-  RTCPeerConnection.prototype.getStats = function() {
+  RTCPeerConnection.prototype.getStats = function(selector) {
+    if (selector && selector instanceof window.MediaStreamTrack) {
+      var senderOrReceiver = null;
+      this.transceivers.forEach(function(transceiver) {
+        if (transceiver.rtpSender &&
+            transceiver.rtpSender.track === selector) {
+          senderOrReceiver = transceiver.rtpSender;
+        } else if (transceiver.rtpReceiver &&
+            transceiver.rtpReceiver.track === selector) {
+          senderOrReceiver = transceiver.rtpReceiver;
+        }
+      });
+      if (!senderOrReceiver) {
+        throw makeError('InvalidAccessError', 'Invalid selector.');
+      }
+      return senderOrReceiver.getStats();
+    }
+
     var promises = [];
     this.transceivers.forEach(function(transceiver) {
       ['rtpSender', 'rtpReceiver', 'iceGatherer', 'iceTransport',
@@ -14121,29 +14965,37 @@ module.exports = function(window, edgeVersion) {
             }
           });
     });
-    var fixStatsType = function(stat) {
-      return {
-        inboundrtp: 'inbound-rtp',
-        outboundrtp: 'outbound-rtp',
-        candidatepair: 'candidate-pair',
-        localcandidate: 'local-candidate',
-        remotecandidate: 'remote-candidate'
-      }[stat.type] || stat.type;
-    };
-    return new Promise(function(resolve) {
-      // shim getStats with maplike support
+    return Promise.all(promises).then(function(allStats) {
       var results = new Map();
-      Promise.all(promises).then(function(res) {
-        res.forEach(function(result) {
-          Object.keys(result).forEach(function(id) {
-            result[id].type = fixStatsType(result[id]);
-            results.set(id, result[id]);
-          });
+      allStats.forEach(function(stats) {
+        stats.forEach(function(stat) {
+          results.set(stat.id, stat);
         });
-        resolve(results);
       });
+      return results;
     });
   };
+
+  // fix low-level stat names and return Map instead of object.
+  var ortcObjects = ['RTCRtpSender', 'RTCRtpReceiver', 'RTCIceGatherer',
+    'RTCIceTransport', 'RTCDtlsTransport'];
+  ortcObjects.forEach(function(ortcObjectName) {
+    var obj = window[ortcObjectName];
+    if (obj && obj.prototype && obj.prototype.getStats) {
+      var nativeGetstats = obj.prototype.getStats;
+      obj.prototype.getStats = function() {
+        return nativeGetstats.apply(this)
+        .then(function(nativeStats) {
+          var mapStats = new Map();
+          Object.keys(nativeStats).forEach(function(id) {
+            nativeStats[id].type = fixStatsType(nativeStats[id]);
+            mapStats.set(id, nativeStats[id]);
+          });
+          return mapStats;
+        });
+      };
+    }
+  });
 
   // legacy callback shims. Should be moved to adapter.js some days.
   var methods = ['createOffer', 'createAnswer'];
@@ -14213,7 +15065,7 @@ module.exports = function(window, edgeVersion) {
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14254,7 +15106,7 @@ module.exports = function(window) {
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14271,7 +15123,7 @@ module.exports = function(window) {
 var utils = __webpack_require__(2);
 
 module.exports = {
-  shimGetUserMedia: __webpack_require__(43),
+  shimGetUserMedia: __webpack_require__(44),
   shimOnTrack: function(window) {
     if (typeof window === 'object' && window.RTCPeerConnection && !('ontrack' in
         window.RTCPeerConnection.prototype)) {
@@ -14478,7 +15330,7 @@ module.exports = {
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14694,7 +15546,7 @@ module.exports = function(window) {
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14955,6 +15807,10 @@ module.exports = {
     window.RTCPeerConnection.prototype.createOffer = function(offerOptions) {
       var pc = this;
       if (offerOptions) {
+        if (typeof offerOptions.offerToReceiveAudio !== 'undefined') {
+          // support bit values
+          offerOptions.offerToReceiveAudio = !!offerOptions.offerToReceiveAudio;
+        }
         var audioTransceiver = pc.getTransceivers().find(function(transceiver) {
           return transceiver.sender.track &&
               transceiver.sender.track.kind === 'audio';
@@ -14978,6 +15834,11 @@ module.exports = {
           pc.addTransceiver('audio');
         }
 
+
+        if (typeof offerOptions.offerToReceiveAudio !== 'undefined') {
+          // support bit values
+          offerOptions.offerToReceiveVideo = !!offerOptions.offerToReceiveVideo;
+        }
         var videoTransceiver = pc.getTransceivers().find(function(transceiver) {
           return transceiver.sender.track &&
               transceiver.sender.track.kind === 'video';
@@ -15000,7 +15861,7 @@ module.exports = {
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15021,8 +15882,8 @@ module.exports = {
   shimRTCIceCandidate: function(window) {
     // foundation is arbitrarily chosen as an indicator for full support for
     // https://w3c.github.io/webrtc-pc/#rtcicecandidate-interface
-    if (window.RTCIceCandidate && 'foundation' in
-        window.RTCIceCandidate.prototype) {
+    if (!window.RTCIceCandidate || (window.RTCIceCandidate && 'foundation' in
+        window.RTCIceCandidate.prototype)) {
       return;
     }
 
@@ -15035,23 +15896,27 @@ module.exports = {
         args.candidate = args.candidate.substr(2);
       }
 
-      // Augment the native candidate with the parsed fields.
-      var nativeCandidate = new NativeRTCIceCandidate(args);
-      var parsedCandidate = SDPUtils.parseCandidate(args.candidate);
-      var augmentedCandidate = Object.assign(nativeCandidate,
-          parsedCandidate);
+      if (args.candidate && args.candidate.length) {
+        // Augment the native candidate with the parsed fields.
+        var nativeCandidate = new NativeRTCIceCandidate(args);
+        var parsedCandidate = SDPUtils.parseCandidate(args.candidate);
+        var augmentedCandidate = Object.assign(nativeCandidate,
+            parsedCandidate);
 
-      // Add a serializer that does not serialize the extra attributes.
-      augmentedCandidate.toJSON = function() {
-        return {
-          candidate: augmentedCandidate.candidate,
-          sdpMid: augmentedCandidate.sdpMid,
-          sdpMLineIndex: augmentedCandidate.sdpMLineIndex,
-          usernameFragment: augmentedCandidate.usernameFragment,
+        // Add a serializer that does not serialize the extra attributes.
+        augmentedCandidate.toJSON = function() {
+          return {
+            candidate: augmentedCandidate.candidate,
+            sdpMid: augmentedCandidate.sdpMid,
+            sdpMLineIndex: augmentedCandidate.sdpMLineIndex,
+            usernameFragment: augmentedCandidate.usernameFragment,
+          };
         };
-      };
-      return augmentedCandidate;
+        return augmentedCandidate;
+      }
+      return new NativeRTCIceCandidate(args);
     };
+    window.RTCIceCandidate.prototype = NativeRTCIceCandidate.prototype;
 
     // Hook up the augmented candidate in onicecandidate and
     // addEventListener('icecandidate', ...)
@@ -15251,6 +16116,11 @@ module.exports = {
   },
 
   shimSendThrowTypeError: function(window) {
+    if (!(window.RTCPeerConnection &&
+        'createDataChannel' in window.RTCPeerConnection.prototype)) {
+      return;
+    }
+
     // Note: Although Firefox >= 57 has a native implementation, the maximum
     //       message size can be reset for all data channels at a later stage.
     //       See: https://bugzilla.mozilla.org/show_bug.cgi?id=1426831
@@ -15281,7 +16151,7 @@ module.exports = {
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const Errors = __webpack_require__(3)
@@ -15338,17 +16208,18 @@ class PubSubSignalingProvider {
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const assert = __webpack_require__(0)
 const {CompositeDisposable} = __webpack_require__(1)
-const Router = __webpack_require__(48)
-const BufferProxy = __webpack_require__(50)
-const EditorProxy = __webpack_require__(56)
-const StarOverlayNetwork = __webpack_require__(58)
-const Messages = __webpack_require__(5)
-const NullPortalDelegate = __webpack_require__(59)
+const Router = __webpack_require__(49)
+const BufferProxy = __webpack_require__(51)
+const EditorProxy = __webpack_require__(57)
+const EditorProxyMetadata = __webpack_require__(18)
+const StarOverlayNetwork = __webpack_require__(59)
+const Messages = __webpack_require__(4)
+const NullPortalDelegate = __webpack_require__(60)
 const FollowState = __webpack_require__(11)
 
 module.exports =
@@ -15382,6 +16253,8 @@ class Portal {
       this.disposables.add(
         this.router.onRequest(`/portals/${id}`, this.receiveSubscription.bind(this))
       )
+    } else {
+      this.editorProxiesMetadataById = new Map()
     }
 
     this.disposables.add(
@@ -15414,12 +16287,6 @@ class Portal {
   async setDelegate (delegate) {
     this.delegate = delegate || new NullPortalDelegate()
 
-    if (!this.isHost) {
-      this.editorProxiesById.forEach((editorProxy) => {
-        this.delegate.addEditorProxy(editorProxy)
-      })
-    }
-
     await this.delegate.updateTether(
       this.resolveFollowState(),
       this.getLocalActiveEditorProxy(),
@@ -15451,6 +16318,10 @@ class Portal {
     })
     this.siteId = this.siteIdsByPeerId.get(this.network.getPeerId())
 
+    response.getEditorProxiesMetadataList().forEach((editorProxyMetadataMessage) => {
+      this.deserializeEditorProxyMetadata(editorProxyMetadataMessage)
+    })
+
     const tethers = response.getTethersList()
     for (let i = 0; i < tethers.length; i++) {
       const tether = tethers[i]
@@ -15469,8 +16340,7 @@ class Portal {
     const activeEditorProxies = response.getActiveEditorProxiesList()
     for (let i = 0; i < activeEditorProxies.length; i++) {
       const editorProxyMessage = activeEditorProxies[i]
-      const editorProxy = this.deserializeEditorProxy(editorProxyMessage)
-      this.delegate.addEditorProxy(editorProxy)
+      this.deserializeEditorProxy(editorProxyMessage)
     }
 
     response.getActiveEditorProxyIdsBySiteIdMap().forEach((editorProxyId, siteId) => {
@@ -15494,18 +16364,18 @@ class Portal {
     return bufferProxy
   }
 
-  async findBufferProxy (id) {
+  async findOrFetchBufferProxy (id) {
     if (id == null) return
 
     let bufferProxy = this.bufferProxiesById.get(id)
     if (!bufferProxy && !this.isHost) {
-      bufferProxy = await this.requestBufferProxy(id)
+      bufferProxy = await this.fetchBufferProxy(id)
     }
 
     return bufferProxy
   }
 
-  async requestBufferProxy (id) {
+  async fetchBufferProxy (id) {
     const response = await this.router.request({recipientId: this.hostPeerId, channelId: `/buffers/${id}`})
     if (response.ok) {
       const bufferProxyMessage = Messages.BufferProxy.deserializeBinary(response.body)
@@ -15535,26 +16405,30 @@ class Portal {
       portal: this
     }, props))
     this.editorProxiesById.set(id, editorProxy)
+    this.broadcastEditorProxyCreation(editorProxy)
+
     return editorProxy
   }
 
-  async findEditorProxy (id) {
+  async findOrFetchEditorProxy (id) {
     let editorProxy = this.editorProxiesById.get(id)
     if (!editorProxy && !this.isHost) {
-      editorProxy = await this.requestEditorProxy(id)
+      editorProxy = await this.fetchEditorProxy(id)
     }
 
     return editorProxy
   }
 
-  async requestEditorProxy (id) {
+  async fetchEditorProxy (id) {
     if (id == null) return
 
     const response = await this.router.request({recipientId: this.hostPeerId, channelId: `/editors/${id}`})
-    if (response.ok) {
-      const editorProxyMessage = Messages.EditorProxy.deserializeBinary(response.body)
+    if (!response.ok) return
+
+    const editorProxyMessage = Messages.EditorProxy.deserializeBinary(response.body)
+    const bufferProxy = await this.findOrFetchBufferProxy(editorProxyMessage.getBufferProxyId())
+    if (bufferProxy) {
       const editorProxy = this.deserializeEditorProxy(editorProxyMessage)
-      this.delegate.addEditorProxy(editorProxy)
       editorProxy.hideSelections()
       return editorProxy
     }
@@ -15565,11 +16439,34 @@ class Portal {
       router: this.router,
       siteId: this.siteId,
       bufferProxiesById: this.bufferProxiesById,
-      didDispose: () => this.editorProxiesById.delete(editorProxy.id),
+      didDispose: () => {
+        this.delegate.didChangeEditorProxies()
+        this.editorProxiesById.delete(editorProxy.id)
+      },
       portal: this
     })
     this.editorProxiesById.set(editorProxy.id, editorProxy)
+
+    const editorProxyMetadata = this.editorProxiesMetadataById.get(editorProxy.id)
+    if (editorProxyMetadata) editorProxyMetadata.dispose()
+
     return editorProxy
+  }
+
+  deserializeEditorProxyMetadata (message) {
+    const editorProxyMetadata = EditorProxyMetadata.deserialize(message, {
+      siteId: this.siteId,
+      router: this.router,
+      didDispose: () => {
+        if (!this.editorProxiesById.has(editorProxyMetadata.id)) {
+          this.delegate.didChangeEditorProxies()
+        }
+
+        this.editorProxiesMetadataById.delete(editorProxyMetadata.id)
+      }
+    })
+    this.editorProxiesMetadataById.set(editorProxyMetadata.id, editorProxyMetadata)
+    return editorProxyMetadata
   }
 
   activateEditorProxy (newEditorProxy) {
@@ -15601,15 +16498,27 @@ class Portal {
     }
   }
 
-  removeEditorProxy (editorProxy) {
-    assert(this.isHost, 'Only the host can remove editor proxies')
+  getEditorProxiesMetadata () {
+    const editorProxiesMetadata = []
 
-    const editorProxyRemovalMessage = new Messages.PortalUpdate.EditorProxyRemoval()
-    editorProxyRemovalMessage.setEditorProxyId(editorProxy.id)
-    const updateMessage = new Messages.PortalUpdate()
-    updateMessage.setEditorProxyRemoval(editorProxyRemovalMessage)
+    this.editorProxiesMetadataById.forEach((editorProxyMetadata) => {
+      editorProxiesMetadata.push(editorProxyMetadata)
+    })
 
-    this.router.notify({channelId: `/portals/${this.id}`, body: updateMessage.serializeBinary()})
+    this.editorProxiesById.forEach((editorProxy) => {
+      editorProxiesMetadata.push(editorProxy.getMetadata())
+    })
+
+    return editorProxiesMetadata
+  }
+
+  getEditorProxyMetadata (editorProxyId) {
+    const editorProxy = this.editorProxiesById.get(editorProxyId)
+    if (editorProxy) {
+      return editorProxy.getMetadata()
+    } else {
+      return this.editorProxiesMetadataById.get(editorProxyId)
+    }
   }
 
   getActiveSiteIds () {
@@ -15679,6 +16588,12 @@ class Portal {
       response.getSiteIdsByPeerIdMap().set(peerId, siteId)
     })
 
+    const editorProxiesMetadata = []
+    this.editorProxiesById.forEach((editorProxy) => {
+      editorProxiesMetadata.push(editorProxy.getMetadata().serialize())
+    })
+    response.setEditorProxiesMetadataList(editorProxiesMetadata)
+
     const activeBufferProxiesById = new Map()
     const activeEditorProxiesById = new Map()
     this.activeEditorProxiesBySiteId.forEach((editorProxy, siteId) => {
@@ -15714,11 +16629,11 @@ class Portal {
   async receiveUpdate ({senderId, body}) {
     const updateMessage = Messages.PortalUpdate.deserializeBinary(body)
 
-    if (updateMessage.hasEditorProxySwitch()) {
+    if (updateMessage.hasEditorProxyCreation()) {
+      this.receiveEditorProxyCreation(updateMessage.getEditorProxyCreation())
+    } else if (updateMessage.hasEditorProxySwitch()) {
       const senderSiteId = this.siteIdsByPeerId.get(senderId)
       await this.receiveEditorProxySwitch(senderSiteId, updateMessage.getEditorProxySwitch())
-    } else if (updateMessage.hasEditorProxyRemoval()) {
-      this.receiveEditorProxyRemoval(updateMessage.getEditorProxyRemoval())
     } else if (updateMessage.hasSiteAssignment()) {
       this.receiveSiteAssignment(updateMessage.getSiteAssignment())
     } else if (updateMessage.hasTetherUpdate()) {
@@ -15728,22 +16643,18 @@ class Portal {
     }
   }
 
-  async receiveEditorProxySwitch (senderSiteId, editorProxySwitch) {
-    const bufferProxyId = editorProxySwitch.getBufferProxyId()
-    const editorProxyId = editorProxySwitch.getEditorProxyId()
+  receiveEditorProxyCreation (editorProxyCreationMessage) {
+    this.deserializeEditorProxyMetadata(editorProxyCreationMessage.getEditorProxyMetadata())
+    this.delegate.didChangeEditorProxies()
+  }
 
-    const bufferProxy = await this.findBufferProxy(bufferProxyId)
-    const editorProxy = bufferProxy ? await this.findEditorProxy(editorProxyId) : null
+  async receiveEditorProxySwitch (senderSiteId, editorProxySwitch) {
+    const editorProxyId = editorProxySwitch.getEditorProxyId()
+    const editorProxy = await this.findOrFetchEditorProxy(editorProxyId)
     this.activeEditorProxiesBySiteId.set(senderSiteId, editorProxy)
 
     if (senderSiteId === this.resolveLeaderSiteId()) this.leaderDidUpdate()
     this.updateActivePositions()
-  }
-
-  receiveEditorProxyRemoval (editorProxyRemoval) {
-    const editorProxyId = editorProxyRemoval.getEditorProxyId()
-    const editorProxy = this.editorProxiesById.get(editorProxyId)
-    if (editorProxy) this.delegate.removeEditorProxy(editorProxy)
   }
 
   receiveSiteAssignment (siteAssignment) {
@@ -15950,18 +16861,25 @@ class Portal {
         }
 
         activePositions[siteId] = {editorProxy, position}
+      } else {
+        activePositions[siteId] = {editorProxy: null, position: null}
       }
     }
 
     this.delegate.updateActivePositions(activePositions)
   }
 
+  broadcastEditorProxyCreation (editorProxy) {
+    const editorProxyCreationMessage = new Messages.PortalUpdate.EditorProxyCreation()
+    editorProxyCreationMessage.setEditorProxyMetadata(editorProxy.getMetadata().serialize())
+    const updateMessage = new Messages.PortalUpdate()
+    updateMessage.setEditorProxyCreation(editorProxyCreationMessage)
+    this.router.notify({channelId: `/portals/${this.id}`, body: updateMessage.serializeBinary()})
+  }
+
   broadcastEditorProxySwitch (editorProxy) {
     const editorProxySwitchMessage = new Messages.PortalUpdate.EditorProxySwitch()
-    if (editorProxy) {
-      editorProxySwitchMessage.setBufferProxyId(editorProxy.bufferProxy.id)
-      editorProxySwitchMessage.setEditorProxyId(editorProxy.id)
-    }
+    if (editorProxy) editorProxySwitchMessage.setEditorProxyId(editorProxy.id)
     const updateMessage = new Messages.PortalUpdate()
     updateMessage.setEditorProxySwitch(editorProxySwitchMessage)
     this.router.notify({channelId: `/portals/${this.id}`, body: updateMessage.serializeBinary()})
@@ -16015,11 +16933,11 @@ function pointsEqual (a, b) {
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const {CompositeDisposable, Emitter} = __webpack_require__(1)
-const {RouterMessage} = __webpack_require__(5)
+const {RouterMessage} = __webpack_require__(4)
 const convertToProtobufCompatibleBuffer = __webpack_require__(8)
 
 module.exports =
@@ -16154,7 +17072,7 @@ class Router {
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -16717,7 +17635,7 @@ proto.Operation.Splice.Insertion.prototype.getText = function() {
 
 /** @param {string} value */
 proto.Operation.Splice.Insertion.prototype.setText = function(value) {
-  jspb.Message.setField(this, 2, value);
+  jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
@@ -17433,7 +18351,7 @@ proto.Operation.Undo.prototype.getUndoCount = function() {
 
 /** @param {number} value */
 proto.Operation.Undo.prototype.setUndoCount = function(value) {
-  jspb.Message.setField(this, 2, value);
+  jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
@@ -17726,7 +18644,7 @@ proto.Operation.MarkersUpdate.LayerOperation.prototype.getIsDeletion = function(
 
 /** @param {boolean} value */
 proto.Operation.MarkersUpdate.LayerOperation.prototype.setIsDeletion = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3BooleanField(this, 1, value);
 };
 
 
@@ -17902,7 +18820,7 @@ proto.Operation.MarkersUpdate.MarkerOperation.prototype.getIsDeletion = function
 
 /** @param {boolean} value */
 proto.Operation.MarkersUpdate.MarkerOperation.prototype.setIsDeletion = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3BooleanField(this, 1, value);
 };
 
 
@@ -18144,7 +19062,7 @@ proto.Operation.MarkersUpdate.MarkerUpdate.prototype.getExclusive = function() {
 
 /** @param {boolean} value */
 proto.Operation.MarkersUpdate.MarkerUpdate.prototype.setExclusive = function(value) {
-  jspb.Message.setField(this, 2, value);
+  jspb.Message.setProto3BooleanField(this, 2, value);
 };
 
 
@@ -18161,7 +19079,7 @@ proto.Operation.MarkersUpdate.MarkerUpdate.prototype.getReversed = function() {
 
 /** @param {boolean} value */
 proto.Operation.MarkersUpdate.MarkerUpdate.prototype.setReversed = function(value) {
-  jspb.Message.setField(this, 3, value);
+  jspb.Message.setProto3BooleanField(this, 3, value);
 };
 
 
@@ -18178,7 +19096,7 @@ proto.Operation.MarkersUpdate.MarkerUpdate.prototype.getTailed = function() {
 
 /** @param {boolean} value */
 proto.Operation.MarkersUpdate.MarkerUpdate.prototype.setTailed = function(value) {
-  jspb.Message.setField(this, 4, value);
+  jspb.Message.setProto3BooleanField(this, 4, value);
 };
 
 
@@ -18484,7 +19402,7 @@ proto.Operation.MarkersUpdate.prototype.getSiteId = function() {
 
 /** @param {number} value */
 proto.Operation.MarkersUpdate.prototype.setSiteId = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -18656,7 +19574,7 @@ proto.Operation.SpliceId.prototype.getSite = function() {
 
 /** @param {number} value */
 proto.Operation.SpliceId.prototype.setSite = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -18671,7 +19589,7 @@ proto.Operation.SpliceId.prototype.getSeq = function() {
 
 /** @param {number} value */
 proto.Operation.SpliceId.prototype.setSeq = function(value) {
-  jspb.Message.setField(this, 2, value);
+  jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
@@ -18825,7 +19743,7 @@ proto.Operation.Point.prototype.getRow = function() {
 
 /** @param {number} value */
 proto.Operation.Point.prototype.setRow = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -18840,7 +19758,7 @@ proto.Operation.Point.prototype.getColumn = function() {
 
 /** @param {number} value */
 proto.Operation.Point.prototype.setColumn = function(value) {
-  jspb.Message.setField(this, 2, value);
+  jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
@@ -18938,13 +19856,13 @@ goog.object.extend(exports, proto);
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const assert = __webpack_require__(0)
 const {CompositeDisposable, Emitter} = __webpack_require__(1)
 const {Document, serializeOperation, deserializeOperation} = __webpack_require__(16)
-const Messages = __webpack_require__(5)
+const Messages = __webpack_require__(4)
 
 function doNothing () {}
 
@@ -19014,17 +19932,23 @@ class BufferProxy {
 
   setTextInRange (oldStart, oldEnd, newText) {
     const operations = this.document.setTextInRange(oldStart, oldEnd, newText)
-    this.broadcastUpdate(operations)
+    this.broadcastOperations(operations)
     this.emitter.emit('did-update-text', {remote: false})
+  }
+
+  setURI (uri) {
+    assert(this.isHost, 'Only hosts can change the URI')
+    this.uri = uri
+    this.broadcastURIChange(uri)
   }
 
   getMarkers () {
     return this.document.getMarkers()
   }
 
-  updateMarkers (markerUpdatesByLayerId, broadcastUpdate = true) {
+  updateMarkers (markerUpdatesByLayerId, broadcastOperations = true) {
     const operations = this.document.updateMarkers(markerUpdatesByLayerId)
-    if (broadcastUpdate) this.broadcastUpdate(operations)
+    if (broadcastOperations) this.broadcastOperations(operations)
     return operations
   }
 
@@ -19040,7 +19964,7 @@ class BufferProxy {
     const undoEntry = this.document.undo()
     if (undoEntry) {
       const {operations, textUpdates, markers} = undoEntry
-      this.broadcastUpdate(operations)
+      this.broadcastOperations(operations)
       if (textUpdates.length > 0) {
         this.emitter.emit('did-update-text', {remote: false})
       }
@@ -19054,7 +19978,7 @@ class BufferProxy {
     const redoEntry = this.document.redo()
     if (redoEntry) {
       const {operations, textUpdates, markers} = redoEntry
-      this.broadcastUpdate(operations)
+      this.broadcastOperations(operations)
       if (textUpdates.length > 0) {
         this.emitter.emit('did-update-text', {remote: false})
       }
@@ -19084,7 +20008,7 @@ class BufferProxy {
     const result = this.document.revertToCheckpoint(checkpoint, options)
     if (result) {
       const {operations, textUpdates, markers} = result
-      this.broadcastUpdate(operations)
+      this.broadcastOperations(operations)
       if (textUpdates.length > 0) {
         this.emitter.emit('did-update-text', {remote: false})
       }
@@ -19113,18 +20037,36 @@ class BufferProxy {
 
   receiveUpdate ({body}) {
     const updateMessage = Messages.BufferProxyUpdate.deserializeBinary(body)
-    const operations = updateMessage.getOperationsList().map(deserializeOperation)
+    if (updateMessage.hasOperationsUpdate()) {
+      this.receiveOperationsUpdate(updateMessage.getOperationsUpdate())
+    } else if (updateMessage.hasUriUpdate()) {
+      this.receiveURIUpdate(updateMessage.getUriUpdate())
+    } else {
+      throw new Error('Received unknown update message')
+    }
+  }
+
+  receiveOperationsUpdate (operationsUpdateMessage) {
+    const operations = operationsUpdateMessage.getOperationsList().map(deserializeOperation)
     this.integrateOperations(operations)
+  }
+
+  receiveURIUpdate (uriUpdateMessage) {
+    this.uri = uriUpdateMessage.getUri()
+    this.delegate.didChangeURI(this.uri)
   }
 
   receiveSave () {
     this.delegate.save()
   }
 
-  broadcastUpdate (operations) {
+  broadcastOperations (operations) {
+    const operationsUpdateMessage = new Messages.BufferProxyUpdate.OperationsUpdate()
+    operationsUpdateMessage.setOperationsList(operations.map(serializeOperation))
     const updateMessage = new Messages.BufferProxyUpdate()
-    updateMessage.setOperationsList(operations.map(serializeOperation))
-    this.router.notify({channelId: `/buffers/${this.id}`, body: updateMessage.serializeBinary()})
+    updateMessage.setOperationsUpdate(operationsUpdateMessage)
+
+    this.broadcastUpdate(updateMessage)
   }
 
   integrateOperations (operations) {
@@ -19135,16 +20077,29 @@ class BufferProxy {
       this.emitter.emit('did-update-text', {remote: true})
     }
   }
+
+  broadcastURIChange (uri) {
+    const uriUpdateMessage = new Messages.BufferProxyUpdate.URIUpdate()
+    uriUpdateMessage.setUri(uri)
+    const updateMessage = new Messages.BufferProxyUpdate()
+    updateMessage.setUriUpdate(uriUpdateMessage)
+
+    this.broadcastUpdate(updateMessage)
+  }
+
+  broadcastUpdate (updateMessage) {
+    this.router.notify({channelId: `/buffers/${this.id}`, body: updateMessage.serializeBinary()})
+  }
 }
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const assert = __webpack_require__(0)
-const DocumentTree = __webpack_require__(52)
-const SplitTree = __webpack_require__(53)
+const DocumentTree = __webpack_require__(53)
+const SplitTree = __webpack_require__(54)
 const {ZERO_POINT, compare, traverse, traversal, characterIndexForPosition, extentForText} = __webpack_require__(10)
 
 module.exports =
@@ -20463,7 +21418,7 @@ class Transaction {
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const SplayTree = __webpack_require__(17)
@@ -20612,7 +21567,7 @@ class DocumentTree extends SplayTree {
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const SplayTree = __webpack_require__(17)
@@ -20733,10 +21688,10 @@ class SplitTree extends SplayTree {
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const {Operation} = __webpack_require__(55)
+const {Operation} = __webpack_require__(56)
 
 function serializeOperation (op) {
   const operationMessage = new Operation()
@@ -20978,7 +21933,7 @@ module.exports = {
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -23762,14 +24717,15 @@ goog.object.extend(exports, proto);
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const {CompositeDisposable, Emitter} = __webpack_require__(1)
 const {serializeRemotePosition, deserializeRemotePosition} = __webpack_require__(16)
-const Messages = __webpack_require__(5)
+const Messages = __webpack_require__(4)
 const FollowState = __webpack_require__(11)
-const NullEditorProxyDelegate = __webpack_require__(57)
+const NullEditorProxyDelegate = __webpack_require__(58)
+const EditorProxyMetadata = __webpack_require__(18)
 
 function doNothing () {}
 
@@ -23839,6 +24795,14 @@ class EditorProxy {
     })
 
     return editorMessage
+  }
+
+  getMetadata () {
+    return new EditorProxyMetadata({
+      id: this.id,
+      bufferProxyId: this.bufferProxy.id,
+      bufferProxyURI: this.bufferProxy.uri
+    })
   }
 
   setDelegate (delegate) {
@@ -24001,7 +24965,7 @@ class EditorProxy {
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports) {
 
 module.exports =
@@ -24023,12 +24987,12 @@ class NullEditorProxyDelegate {
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const assert = __webpack_require__(0)
 const {CompositeDisposable, Emitter} = __webpack_require__(1)
-const {NetworkMessage, PeerIdentity} = __webpack_require__(5)
+const {NetworkMessage, PeerIdentity} = __webpack_require__(4)
 const Errors = __webpack_require__(3)
 const convertToProtobufCompatibleBuffer = __webpack_require__(8)
 
@@ -24277,6 +25241,8 @@ class StarOverlayNetwork {
 
   receiveLeaveNotification (rawMessage, leaveNotification) {
     const memberId = leaveNotification.getMemberId()
+    if (!this.connectedMemberIds.has(memberId)) return
+
     if (this.isHub) {
       this.spokes.delete(memberId)
       this.forwardBroadcast(memberId, rawMessage)
@@ -24359,16 +25325,12 @@ function deserializePeerIdentity (identityMessage) {
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports) {
 
 module.exports =
 class NullPortalDelegate {
   dispose () {}
-
-  addEditorProxy () {}
-
-  removeEditorProxy () {}
 
   updateTether () {}
 
@@ -24381,14 +25343,16 @@ class NullPortalDelegate {
   siteDidLeave () {}
 
   siteDidJoin () {}
+
+  didChangeEditorProxies () {}
 }
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const Pusher = __webpack_require__(61)
+const Pusher = __webpack_require__(62)
 const {Disposable} = __webpack_require__(1)
 const Errors = __webpack_require__(3)
 
@@ -24467,7 +25431,7 @@ function createDisconnectedPusherClient (key, options) {
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
@@ -28655,7 +29619,7 @@ return /******/ (function(modules) { // webpackBootstrap
 ;
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const {HTTPRequestError} = __webpack_require__(3)
@@ -28733,7 +29697,7 @@ function getDiagnosticMessage ({method, url, status, rawBody}) {
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const assert = __webpack_require__(0);
@@ -28776,10 +29740,6 @@ module.exports = class Buffer {
       if (typeof this.onUpdateText === "function") {
         this.onUpdateText(textUpdate);
       }
-
-      //      const oldExtent = traversal(textUpdate.oldEnd, textUpdate.oldStart)
-      //      this.delete(textUpdate.oldStart, oldExtent)
-      //      this.insert(textUpdate.newStart, textUpdate.newText)
     }
   }
 
@@ -28859,7 +29819,7 @@ function characterIndexForPosition(text, target) {
 }
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const assert = __webpack_require__(0);
@@ -28878,12 +29838,10 @@ module.exports = class Editor {
   }
 
   updateViewport(startRow, endRow) {
-    console.log("update viewport: " + siteId);
     this.viewport = { startRow, endRow };
   }
 
   isScrollNeededToViewPosition(position) {
-    console.log("isScroll needed: " + position);
     assert(position && position.row != null && position.column != null);
 
     if (this.viewport) {
@@ -28921,14 +29879,12 @@ module.exports = class Editor {
   }
 
   clearSelectionsForSiteId(siteId) {
-    console.log("clearSelectionsForSiteID: " + siteId);
     delete this.selectionsBySiteId[siteId];
   }
-
 };
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -28975,7 +29931,11 @@ module.exports = class FakePortalDelegate {
       this.onAddEditorProxy(editorProxy);
     }
     console.log("addEditorProxy: " + editorProxy.bufferProxy.uri);
-    assert(!this.editorProxies.has(editorProxy), 'Cannot add the same editor proxy multiple times');
+    if (!this.editorProxies.has(editorProxy)) {
+      console.log('Cannot add the same editor proxy multiple times remove/add again');
+      this.editorProxies.delete(editorProxy);
+    }
+
     this.editorProxies.add(editorProxy);
   }
 
@@ -29012,6 +29972,7 @@ module.exports = class FakePortalDelegate {
       this.onUpdateTether(state, editorProxy, position);
     }
     console.log("updateTether: " + editorProxy.bufferProxy.uri);
+    this.addEditorProxy(editorProxy);
     this.tetherState = state;
     if (editorProxy != this.tetherEditorProxy) {
       this.tetherEditorProxy = editorProxy;
@@ -29045,6 +30006,8 @@ module.exports = class FakePortalDelegate {
   siteDidLeave(siteId) {
     this.leaveEvents.push(siteId);
   }
+
+  didChangeEditorProxies() {}
 };
 
 /***/ })

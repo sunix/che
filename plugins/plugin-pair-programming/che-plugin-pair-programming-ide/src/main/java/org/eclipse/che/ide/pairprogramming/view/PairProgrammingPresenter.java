@@ -14,8 +14,11 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import java.util.function.Consumer;
+
 import org.eclipse.che.ide.api.parts.base.BasePresenter;
+import org.eclipse.che.ide.api.preferences.PreferencesManager;
 import org.eclipse.che.ide.pairprogramming.CheTeletype;
 import org.eclipse.che.ide.teletype.CheTeletypePortalBinding;
 import org.eclipse.che.ide.teletype.TeletypeClient;
@@ -28,11 +31,13 @@ public class PairProgrammingPresenter extends BasePresenter
 
   private PairProgrammingView view;
   private CheTeletype cheTeletype;
+  private PreferencesManager preferenceManager;
 
   @Inject
-  public PairProgrammingPresenter(PairProgrammingView view, CheTeletype cheTeletype) {
+  public PairProgrammingPresenter(PairProgrammingView view, CheTeletype cheTeletype, PreferencesManager preferenceManager) {
     this.view = view;
     this.cheTeletype = cheTeletype;
+    this.preferenceManager = preferenceManager;
     this.view.setDelegate(this);
   }
 
@@ -59,6 +64,10 @@ public class PairProgrammingPresenter extends BasePresenter
     view.setPusherClusterName("mt1");
     view.setUserToken("");
     view.setPortalId("");
+    String previouslyUsedPortalId = preferenceManager.getValue("teletypePortalId");
+    if(previouslyUsedPortalId != null){
+        view.setPortalId(previouslyUsedPortalId);
+    }
   }
 
   @Override
@@ -81,6 +90,8 @@ public class PairProgrammingPresenter extends BasePresenter
             cheTeletype.connectAlreadyOpennedEditor(guestPortalBinding);
             cheTeletype.onEditorsDocumentModelChanged(guestPortalBinding);
             view.disableJoinButton();
+            preferenceManager.setValue("teletypePortalId", view.getPortalId());
+            preferenceManager.flushPreferences();
           }
         });
   }
