@@ -14,16 +14,16 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import java.util.function.Consumer;
-
 import org.eclipse.che.ide.api.parts.base.BasePresenter;
 import org.eclipse.che.ide.api.preferences.PreferencesManager;
 import org.eclipse.che.ide.pairprogramming.CheTeletype;
+import org.eclipse.che.ide.pairprogramming.PairProgrammingResources;
 import org.eclipse.che.ide.teletype.CheTeletypePortalBinding;
 import org.eclipse.che.ide.teletype.TeletypeClient;
 import org.eclipse.che.ide.teletype.TeletypePortal;
 import org.eclipse.che.ide.util.loging.Log;
+import org.vectomatic.dom.svg.ui.SVGResource;
 
 @Singleton
 public class PairProgrammingPresenter extends BasePresenter
@@ -32,12 +32,18 @@ public class PairProgrammingPresenter extends BasePresenter
   private PairProgrammingView view;
   private CheTeletype cheTeletype;
   private PreferencesManager preferenceManager;
+  private PairProgrammingResources resources;
 
   @Inject
-  public PairProgrammingPresenter(PairProgrammingView view, CheTeletype cheTeletype, PreferencesManager preferenceManager) {
+  public PairProgrammingPresenter(
+      PairProgrammingView view,
+      CheTeletype cheTeletype,
+      PreferencesManager preferenceManager,
+      PairProgrammingResources resources) {
     this.view = view;
     this.cheTeletype = cheTeletype;
     this.preferenceManager = preferenceManager;
+    this.resources = resources;
     this.view.setDelegate(this);
   }
 
@@ -57,6 +63,11 @@ public class PairProgrammingPresenter extends BasePresenter
   }
 
   @Override
+  public SVGResource getTitleImage() {
+    return resources.titleIcon();
+  }
+
+  @Override
   public void go(AcceptsOneWidget container) {
     container.setWidget(view);
     view.setApiServerBaseUrl("https://api.teletype.atom.io");
@@ -65,8 +76,8 @@ public class PairProgrammingPresenter extends BasePresenter
     view.setUserToken("");
     view.setPortalId("");
     String previouslyUsedPortalId = preferenceManager.getValue("teletypePortalId");
-    if(previouslyUsedPortalId != null){
-        view.setPortalId(previouslyUsedPortalId);
+    if (previouslyUsedPortalId != null) {
+      view.setPortalId(previouslyUsedPortalId);
     }
   }
 
