@@ -14,20 +14,23 @@
 set -e
 set -u
 
-# Clone specific tag of a Theia version
-git clone --branch v${THEIA_VERSION} https://github.com/theia-ide/theia ${HOME}/theia-source-code
+if [[ ! -v THEIA_SOURCE_CODE ]]; then
+  THEIA_SOURCE_CODE=${HOME}/theia-source-code
+  # Clone specific tag of a Theia version
+  git clone --branch v${THEIA_VERSION} https://github.com/theia-ide/theia ${THEIA_SOURCE_CODE}
 
-# Apply patches (if any)
-if [ -d "/home/theia-build/patches/${THEIA_VERSION}" ]; then
-    echo "Applying patches for Theia version ${THEIA_VERSION}";
-    for file in $(find "/home/theia-build/patches/${THEIA_VERSION}" -name '*.patch'); do
-        echo "Patching with ${file}";
-        cd ${HOME}/theia-source-code && patch -p1 < ${file};
-    done
+  # Apply patches (if any)
+  if [ -d "/home/theia-build/patches/${THEIA_VERSION}" ]; then
+      echo "Applying patches for Theia version ${THEIA_VERSION}";
+      for file in $(find "/home/theia-build/patches/${THEIA_VERSION}" -name '*.patch'); do
+          echo "Patching with ${file}";
+          cd ${THEIA_SOURCE_CODE} && patch -p1 < ${file};
+      done
+  fi
 fi
 
 # Compile Theia
-cd ${HOME}/theia-source-code && yarn
+cd ${THEIA_SOURCE_CODE} && yarn
 
 # add registry and start it
 npm install -g verdaccio
@@ -57,7 +60,7 @@ expect {
 EOD
 
 # Now go to source code of theia and publish it
-cd ${HOME}/theia-source-code
+cd ${THEIA_SOURCE_CODE}
 
 # using 0.4 there to bump major version so we're sure to not download any 0.3.x dependencies
 # Set the version of Theia
@@ -67,4 +70,6 @@ export THEIA_VERSION=0.4.1-che
 cd ${HOME}
 
 # Code has been published, let's delete it
-rm -rf ${HOME}/theia-source-code
+if [ $THEIA_SOURCE_CODE = ${HOME}/theia-source-code ]; then
+  rm -rf ${HOME}/theia-source-code
+fi
