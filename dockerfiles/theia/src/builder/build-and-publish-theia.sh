@@ -28,13 +28,14 @@ if [[ ! -v THEIA_SOURCE_CODE ]]; then
       done
   fi
 fi
-
 # Compile Theia
-cd ${THEIA_SOURCE_CODE} && yarn
+#cd ${THEIA_SOURCE_CODE} && yarn
 
 # add registry and start it
-npm install -g verdaccio
-mkdir ${HOME}/verdaccio
+if [ !-d ${HOME}/verdaccio ]; then
+  npm install -g verdaccio
+  mkdir ${HOME}/verdaccio
+fi
 cd ${HOME}/verdaccio
 verdaccio &
 sleep 3
